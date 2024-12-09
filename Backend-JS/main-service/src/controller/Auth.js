@@ -1,3 +1,4 @@
+const axios = require('axios');
 const bcrypt = require("bcrypt");
 const User = require("../model/User");
 const OTP = require("../model/OTP");
@@ -305,3 +306,75 @@ exports.changePassword = async (req, res) => {
 		});
 	}
 };
+
+
+exports.findUserIp = async (req, res) => {
+  const ip = req.query.ip || req.connection.remoteAddress;
+  const userId = req.query.userId; // Check if user is logged in by checking userId in query
+  
+  try {
+    // Fetch the IP location data from GeoPlugin
+    const response = await axios.get(`http://www.geoplugin.net/json.gp?ip=${ip}`);
+    const locationData = response.data;
+
+    // Extract latitude, longitude, and city
+    const latitude = parseFloat(locationData.geoplugin_latitude);
+    const longitude = parseFloat(locationData.geoplugin_longitude);
+    const city = locationData.geoplugin_city;
+
+    // If user is logged in, update their details
+    if (userId) {
+      const user = await User.findById(userId);
+
+      if (user) {
+        // Find or create UserDetail to store location data
+        let userDetail = await UserDetail.findOne({ userId: userId });
+
+        if (!userDetail) {
+          userDetail = new UserDetail({ userId: userId });
+        }
+
+        // Update location and address (city) in UserDetail
+        userDetail.location = {
+          latitude: latitude,
+          longitude: longitude
+        };
+        userDetail.address = city; // Adding city to the address field
+
+        // Save the user details
+        await userDetail.save();
+
+        // Optionally, you can also update the main user object if needed
+        user.location = userDetail.location;
+        await user.save();
+
+        return res.status(200).json({
+          success: true,
+          message: "User location updated successfully",
+          location: userDetail.location
+        });
+      }
+
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // If user is not logged in, only return the location
+    return res.status(200).json({
+      success: true,
+      location: {
+        latitude: latitude,
+        longitude: longitude,
+        city: city // Include city in the response for non-logged-in users
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching IP location');
+  }
+};
+
+
+
