@@ -112,7 +112,7 @@ const setupProxyRoutes = () => {
 
   // Proxy Middleware for Microservices
   app.use('/api/main', createProxyMiddleware({
-    target: process.env.MAIN_SERVICE_URL || 'http://localhost:4000',
+    target: process.env.MAIN_SERVICE_URL || 'http://localhost:3002',
     changeOrigin: true,
     pathRewrite: {
       '^/api/main': ''

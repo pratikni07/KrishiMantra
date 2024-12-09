@@ -1,5 +1,5 @@
-const Company = require('../models/Company');
-const Product = require('../models/Products');
+const Company = require('../model/Company');
+const Product = require('../model/Products');
 
 exports.createCompany = async (req, res) => {
   try {

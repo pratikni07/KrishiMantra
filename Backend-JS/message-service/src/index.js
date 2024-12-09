@@ -1,80 +1,92 @@
-require('dotenv').config();
-
 const express = require('express');
 const http = require('http');
-const cors = require('cors');
-const helmet = require('helmet');
-
-const DatabaseConnection = require('./config/database');
-const SocketService = require('./config/socket');
-const logger = require('./utils/logger');
-
-// Route Imports
-const messageRoutes = require('./routes/messageRoutes');
+const mongoose = require('mongoose');
+const socketService = require('./services/socketService');
 const conversationRoutes = require('./routes/conversationRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+const redisClient = require('./config/redis');
 
-class MessageServiceApp {
-  constructor() {
-    this.app = express();
-    this.server = http.createServer(this.app);
-    this.socketService = new SocketService(this.server);
-  }
+require('dotenv').config();
 
-  async initializeMiddlewares() {
-    this.app.use(cors({
-      origin: process.env.SOCKET_CORS_ORIGIN || '*',
-      credentials: true
-    }));
-    this.app.use(helmet());
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
-  }
+const app = express();
+const server = http.createServer(app);
 
-  initializeRoutes() {
-    this.app.use('/api/messages', messageRoutes);
-    this.app.use('/api/conversations', conversationRoutes);
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-    // Global Error Handler
-    this.app.use((err, req, res, next) => {
-      logger.error(err.stack);
-      res.status(500).json({
-        status: 'error',
-        message: err.message || 'Something went wrong'
-      });
-    });
-  }
-
-  async start() {
-    try {
-      // Connect to Database
-      await DatabaseConnection.connect();
-
-      // Initialize Middlewares
-      await this.initializeMiddlewares();
-
-      // Initialize Routes
-      this.initializeRoutes();
-
-      // Start Server
-      const PORT = process.env.PORT || 3002;
-      this.server.listen(PORT, () => {
-        logger.info(`Message Service running on port ${PORT}`);
-        logger.info(`Environment: ${process.env.NODE_ENV}`);
-      });
-    } catch (error) {
-      logger.error('Failed to start Message Service:', error);
-      process.exit(1);
-    }
-  }
-}
-
-// Handle Graceful Shutdown
-process.on('SIGTERM', async () => {
-  logger.info('SIGTERM received. Shutting down gracefully');
-  await DatabaseConnection.disconnect();
-  process.exit(0);
+// Database Connection
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => {
+  console.log('✅ MongoDB connected successfully');
+})
+.catch((err) => {
+  console.error('❌ MongoDB connection error:', err);
 });
 
-// Initialize and Start the Application
-const messageService = new MessageServiceApp();
-messageService.start();
+// MongoDB Connection Event Listeners
+mongoose.connection.on('connected', () => {
+  console.log('✅ Mongoose connected to database');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ Mongoose connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️ Mongoose disconnected from database');
+});
+
+// Redis Connection
+const redis = redisClient.getClient();
+
+redis.on('connect', () => {
+  console.log('✅ Redis client connected');
+});
+
+redis.on('ready', () => {
+  console.log('✅ Redis client is ready');
+});
+
+redis.on('error', (err) => {
+  console.error('❌ Redis connection error:', err);
+});
+
+// Initialize Socket.IO
+socketService.initializeSocket(server);
+
+// Routes
+app.use('/api/conversations', conversationRoutes);
+app.use('/api/messages', messageRoutes);
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled Error:', err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err.stack : {}
+  });
+});
+
+// Graceful Shutdown
+process.on('SIGINT', async () => {
+  try {
+    await mongoose.connection.close();
+    redis.quit();
+    console.log('🔌 MongoDB and Redis connections closed');
+    process.exit(0);
+  } catch (err) {
+    console.error('Error during shutdown:', err);
+    process.exit(1);
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+});

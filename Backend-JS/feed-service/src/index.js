@@ -1,154 +1,85 @@
-import express from 'express';
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const { redisClient } = require('./utils/redis');
 
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-import expressStatusMonitor from 'express-status-monitor';
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config();
-
-// Create Express App
 const app = express();
-const PORT = parseInt(process.env.PORT || '3000', 10);
 
-// Middleware Setup
-const setupMiddleware = () => {
-  // Status Monitoring
-  app.use(expressStatusMonitor({
-    title: 'Microservices Status',
-    path: '/status',
-    spans: [
-      {
-        interval: 1,    // Every second
-        retention: 60   // Keep 60 data points
-      },
-      {
-        interval: 5,    // Every 5 seconds
-        retention: 60   // Keep 60 data points
-      }
-    ],
-    chartVisibility: {
-      cpu: true,
-      mem: true,
-      load: true,
-      responseTime: true,
-      rps: true,
-      statusCodes: true
-    }
-  }));
+// Security Middleware
+app.use(helmet());
 
-  // CORS Configuration
-  app.use(cors({
-    origin: process.env.CORS_ORIGIN || '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-  }));
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
 
-  // Security Middleware
-  app.use(helmet());
-  app.use(express.json());
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  // Rate Limiting
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    standardHeaders: true,
-    legacyHeaders: false,
+// Database Connection
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000
+})
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.error('MongoDB Connection Error:', err));
+
+// Handle Mongoose Connection Events
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose connected to database');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('Mongoose connection error:', err);
+});
+
+// Routes
+app.use('/feeds', require('./routes/feed'));
+app.use('/comments', require('./routes/comment'));
+app.use('/likes', require('./routes/like'));
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'production' ? {} : err.stack
   });
-  app.use(limiter);
+});
 
-  // Logging Middleware
-  app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-    next();
-  });
-};
+// Redis Connection Check
+redisClient.on('ready', () => {
+  console.log('Redis is ready');
+});
 
-// Proxy Routes Setup
-const setupProxyRoutes = () => {
-  // Health Check Route
-  app.get('/health', (req, res) => {
-    res.status(200).json({
-      status: 'healthy',
-      timestamp: new Date().toISOString()
-    });
-  });
+redisClient.on('error', (err) => {
+  console.error('Redis Error:', err);
+});
 
-  // Proxy Middleware for Microservices
-  app.use('/api/main', createProxyMiddleware({ 
-    target: process.env.MAIN_SERVICE_URL || 'http://localhost:4000', 
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api/main': ''
-    }
-  }));
+// Start Server
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
-  app.use('/api/notifications', createProxyMiddleware({ 
-    target: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:4001', 
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api/notifications': ''
-    }
-  }));
-
-  app.use('/api/feed', createProxyMiddleware({ 
-    target: process.env.FEED_SERVICE_URL || 'http://localhost:4002', 
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api/feed': ''
-    }
-  }));
-};
-
-// Error Handling Setup
-const setupErrorHandling = () => {
-  // 404 Handler
-  app.use((req, res) => {
-    res.status(404).json({
-      error: 'Not Found',
-      path: req.path
-    });
-  });
-
-  // Error Handling Middleware
-  app.use((err, req, res, next) => {
-    console.error('Unhandled Error:', err);
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: err.message,
-      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-    });
-  });
-};
-
-// Start Server Function
-const startServer = () => {
-  const server = app.listen(PORT, () => {
-    console.log(`🚀 API Gateway running on port ${PORT}`);
-    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-  });
-
-  // Graceful Shutdown
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM signal received. Closing HTTP server...');
-    server.close(() => {
-      console.log('HTTP server closed');
+// Graceful Shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Closing HTTP server.');
+  server.close(() => {
+    console.log('HTTP server closed.');
+    mongoose.connection.close(false, () => {
+      console.log('MongoDB connection closed.');
       process.exit(0);
     });
   });
-};
+});
 
-// Initialize Application
-const initializeApp = () => {
-  setupMiddleware();
-  setupProxyRoutes();
-  setupErrorHandling();
-  startServer();
-};
-
-// Run the application
-initializeApp();
-
-export default app;
+module.exports = app;

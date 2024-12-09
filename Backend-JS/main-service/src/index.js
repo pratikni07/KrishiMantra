@@ -17,7 +17,7 @@ const statusMonitor = require("express-status-monitor");
 const userRoutes = require("./routes/User");
 const companyRoutes = require('./routes/companyRoutes');
 const productRoutes = require('./routes/productRoutes');
-
+const newsRoutes = require('./routes/newsRoutes');
 // Load environment variables
 dotenv.config();
 
@@ -127,10 +127,11 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/api/v1/auth", userRoutes);
-app.use('/api/v1/companies', companyRoutes);
-app.use('/api/v1/products', productRoutes);
+app.use("/auth", userRoutes);
+app.use('/companies', companyRoutes);
+app.use('/products', productRoutes);
 
+app.use('/news', newsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
