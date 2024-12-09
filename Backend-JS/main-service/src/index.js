@@ -18,6 +18,7 @@ const userRoutes = require("./routes/User");
 const companyRoutes = require('./routes/companyRoutes');
 const productRoutes = require('./routes/productRoutes');
 const newsRoutes = require('./routes/newsRoutes');
+const adsRoutes = require("./routes/AdsRoutes")
 // Load environment variables
 dotenv.config();
 
@@ -130,7 +131,7 @@ app.get("/", (req, res) => {
 app.use("/auth", userRoutes);
 app.use('/companies', companyRoutes);
 app.use('/products', productRoutes);
-
+app.use('/ads',adsRoutes)
 app.use('/news', newsRoutes);
 
 // Error handling middleware

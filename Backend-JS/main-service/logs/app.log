@@ -59,3 +59,49 @@
 {"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T05:33:28.010Z"}
 {"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T05:35:55.067Z"}
 {"level":"info","message":"Server is shutting down...","timestamp":"2024-12-09T05:39:01.087Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T14:32:38.047Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-09T14:32:39.839Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T14:39:46.204Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T14:40:16.965Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-09T14:40:40.370Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T14:40:42.213Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-09T14:40:54.764Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T14:40:59.173Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:27:20.233Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:27:31.190Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:27:43.666Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:27:46.144Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:27:48.777Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:27:50.985Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:28:15.171Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:28:50.402Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:31:10.249Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:31:19.980Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:31:22.702Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:32:24.612Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:33:18.684Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T15:59:31.451Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:00:02.234Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:01:10.042Z"}
+{"level":"error","message":"Error: Unexpected end of form\n    at Multipart._final (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/busboy/lib/types/multipart.js:588:17)\n    at prefinish (node:internal/streams/writable:916:14)\n    at finishMaybe (node:internal/streams/writable:930:5)\n    at Writable.end (node:internal/streams/writable:845:5)\n    at onend (node:internal/streams/readable:948:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2024-12-09T16:03:42.501Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-09T16:04:15.065Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:04:17.016Z"}
+{"level":"error","message":"Error: Unexpected end of form\n    at Multipart._final (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/busboy/lib/types/multipart.js:588:17)\n    at prefinish (node:internal/streams/writable:916:14)\n    at finishMaybe (node:internal/streams/writable:930:5)\n    at Writable.end (node:internal/streams/writable:845:5)\n    at onend (node:internal/streams/readable:948:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2024-12-09T16:04:19.686Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:05:31.970Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-09T16:06:32.659Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:06:42.694Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:06:56.687Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:07:26.117Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:07:45.140Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:09:47.445Z"}
+{"level":"error","message":"Error: Unexpected end of form\n    at Multipart._final (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/busboy/lib/types/multipart.js:588:17)\n    at prefinish (node:internal/streams/writable:916:14)\n    at finishMaybe (node:internal/streams/writable:930:5)\n    at Writable.end (node:internal/streams/writable:845:5)\n    at onend (node:internal/streams/readable:948:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2024-12-09T16:09:55.475Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:11:47.945Z"}
+{"level":"error","message":"Error: Unexpected end of form\n    at Multipart._final (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/busboy/lib/types/multipart.js:588:17)\n    at prefinish (node:internal/streams/writable:916:14)\n    at finishMaybe (node:internal/streams/writable:930:5)\n    at Writable.end (node:internal/streams/writable:845:5)\n    at onend (node:internal/streams/readable:948:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2024-12-09T16:11:50.256Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:12:54.248Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:13:00.102Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:13:21.801Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:14:38.229Z"}
+{"level":"error","message":"Error: Unexpected end of form\n    at Multipart._final (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/busboy/lib/types/multipart.js:588:17)\n    at prefinish (node:internal/streams/writable:916:14)\n    at finishMaybe (node:internal/streams/writable:930:5)\n    at Writable.end (node:internal/streams/writable:845:5)\n    at onend (node:internal/streams/readable:948:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2024-12-09T16:14:41.661Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:14:51.216Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:15:04.149Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-09T16:15:11.234Z"}

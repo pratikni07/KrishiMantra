@@ -4,13 +4,11 @@ const cloudinary = require("../config/cloudinary");
 const mongoose = require("mongoose");
 
 class NewsController {
-    // Create News
     async createNews(req, res) {
         try {
             const { content, tags } = req.body;
             const uploadedBy = req.user._id;
 
-            // Image upload to cloudinary
             let imageUrl = null;
             if (req.files && req.files.image) {
                 const result = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
