@@ -8,32 +8,37 @@ class HomeAdsController {
     async createHomeAd(req, res) {
       try {
           const { title, content, dirURL, modal, prority } = req.body;
-  
-          // File upload happens automatically with multer-storage-cloudinary
-          const file = req.file;
+          const file = req.file; // For single file upload
   
           if (!file) {
-              return res.status(400).json({ error: 'File not uploaded or invalid format' });
+              return res.status(400).json({ error: 'Missing required parameter - file' });
           }
   
-          // Create the Home Ad with the Cloudinary URL
+          // Upload file to Cloudinary
+          const cloudinaryResult = await cloudinary.uploader.upload(file.path); // Use file.path for the temp file location
+  
+          if (!cloudinaryResult) {
+              return res.status(500).json({ error: 'Failed to upload image to Cloudinary' });
+          }
+  
+          // Create the new Home Ad entry
           const newHomeAd = new HomeSlider({
               title,
               content,
-              dirURL: dirURL, 
+              dirURL: cloudinaryResult ? cloudinaryResult.secure_url : dirURL,
               modal,
-              prority,
+              prority
           });
   
           await newHomeAd.save();
-          await RedisClient.del('home_ads'); // Clear cache
+          await RedisClient.del('home_ads');
   
           res.status(201).json({ message: 'Home Ad created', ad: newHomeAd });
       } catch (error) {
-          console.error('Error creating Home Ad:', error);
+          console.error(error);
           res.status(500).json({ error: error.message });
       }
-    }
+  }
   
 
     async getHomeAds(req, res) {

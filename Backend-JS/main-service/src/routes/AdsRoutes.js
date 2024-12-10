@@ -1,7 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+
+// Set up multer storage configuration
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'path/to/store/temp/files'); // Specify the temp directory for storing files
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname); // Generate unique filenames
+    }
+});
+
+const upload = multer({ storage: storage });
 
 const HomeAdsController = require('../controller/Advertisement/HomeAdsController');
 const FeedAdsController = require('../controller/Advertisement/FeedAdsController');
@@ -10,7 +21,7 @@ const DisplayController = require('../controller/Advertisement/DisplayController
 
 
 // Home Slider Ads Routes
-router.post('/home-ads', HomeAdsController.createHomeAd);
+router.post('/home-ads',upload.single('image'), HomeAdsController.createHomeAd);
 router.get('/home-ads', HomeAdsController.getHomeAds);
 router.put('/home-ads/:id', upload.single('image'), HomeAdsController.updateHomeAd);
 router.delete('/home-ads/:id', HomeAdsController.deleteHomeAd);

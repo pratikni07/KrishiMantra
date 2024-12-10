@@ -13,7 +13,7 @@ const serviceSchema = new mongoose.Schema({
     description:{
         type:String
     },
-    prority:{
+    priority:{
         type:Number
     }
 })
