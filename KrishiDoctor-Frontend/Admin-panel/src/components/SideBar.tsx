@@ -56,7 +56,7 @@ const SideBar = () => {
       {/* Logo Section */}
       <div className="flex items-center p-6 mb-8">
         <Tractor className="mr-3" size={32} />
-        <h2 className="text-2xl font-bold">Farm Doctor</h2>
+        <h2 className="text-2xl font-bold">Krishi Doctor</h2>
       </div>
 
       {/* Navigation Links */}
@@ -80,7 +80,7 @@ const SideBar = () => {
 
       {/* Footer Section */}
       <div className="p-4 text-center text-sm text-white text-opacity-70">
-        © 2024 Farm Doctor
+        © 2024 Krishi Doctor
       </div>
     </div>
   );

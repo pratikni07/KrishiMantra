@@ -18,5 +18,5 @@ export default {
   	}
   },
   darkMode: ["class", "class"],
-  plugins: [require("tailwindcss-animate")],
+  plugins: [nextui(),require("tailwindcss-animate")],
 }

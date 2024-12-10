@@ -5,6 +5,7 @@ import Home from './Pages/Home';
 import SideBar from './components/SideBar';
 import DoctorLogin from './Pages/DoctorLogin';
 import Crops from './Pages/Crops';
+import Users from './Pages/Users';
 
 function App() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function App() {
           <Route path="/doctorlogin" element={<DoctorLogin />} />
           <Route path="/" element={<Home />} />
           <Route path="/crops" element={<Crops />} />
+          <Route path="/users" element={<Users />} />
         </Routes>
       </div>
     </div>

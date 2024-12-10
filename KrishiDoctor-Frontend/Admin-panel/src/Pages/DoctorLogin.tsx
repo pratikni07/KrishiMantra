@@ -18,7 +18,7 @@ const DoctorLogin = () => {
         <div className="bg-white shadow-2xl rounded-2xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-[#4AB677] to-[#118D45] p-6 text-center">
-            <h1 className="text-3xl font-bold text-white">Farm Doctor</h1>
+            <h1 className="text-3xl font-bold text-white">Krishi Doctor</h1>
             <p className="text-white text-opacity-80 mt-2">Manage Your Farm Intelligently</p>
           </div>
 
@@ -88,7 +88,7 @@ const DoctorLogin = () => {
 
 
         <div className="text-center text-white mt-4 text-sm">
-          Farm Doctor v1.0.0
+          Krishi Doctor v1.0.0
         </div>
       </div>
     </div>
