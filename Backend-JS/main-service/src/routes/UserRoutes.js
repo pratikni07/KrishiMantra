@@ -1,10 +1,21 @@
+// routes/userRoutes.js (adding to existing file)
 const express = require("express");
 const router = express.Router();
-const { getUserByPage, getUserById } = require("../controller/UserController");
+const { 
+  getUserByPage, 
+  getUserById, 
+  updateUserProfile,
+  updateUserDetails,
+  updateSubscription
+} = require("../controller/UserController");
 
+// Existing routes
 router.get("/users", getUserByPage);
-
-// Route for fetching a user by ID
 router.get("/users/:id", getUserById);
+
+// New update routes (assuming you have authentication middleware)
+router.put("/profile", updateUserProfile);
+router.put("/details", updateUserDetails);
+router.put("/subscription", updateSubscription);
 
 module.exports = router;
