@@ -1,4 +1,6 @@
 const Testimonial = require("../model/Testinomial")
+const User = require("../model/User")
+
 
 exports.addTestinomial = async(req,res)=>{
     try {
