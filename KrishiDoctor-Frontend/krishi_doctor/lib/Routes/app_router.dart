@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:krishi_doctor/Login/Repository/login_repo.dart';
 import 'package:krishi_doctor/Login/login_screen.dart';
+import 'package:krishi_doctor/Pages/Screens/HomePage.dart';
+import 'package:krishi_doctor/Pages/Screens/ReelPage.dart';
 import '../Login/bloc/login_bloc.dart';
 import '../Splash/Repository/splashRepo.dart';
 import '../Splash/bloc/splash_bloc.dart';
@@ -17,13 +19,29 @@ class AppRouter{
             child: SplashScreen(),
           ),
         ));
-      case '/login':
+      // case '/login':
+      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+      //   child: BlocProvider(
+      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
+      //     child: LoginScreen(),
+      //   ),
+      // ));
+      // case '/login':
+      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+      //   child: BlocProvider(
+      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
+      //     child: FarmerHomePage(),
+      //   ),
+      // ));
+
+       case '/login':
         return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
         child: BlocProvider(
           create: (context)=>LoginBloc(context.read<LoginRepo>()),
-          child: LoginScreen(),
+          child: ReelsPage(),
         ),
-        ));
+      ));
+      
       default:
         return MaterialPageRoute(builder: (_)=>RepositoryProvider(
           create: (context)=>SplashRepo(),
