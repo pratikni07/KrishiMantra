@@ -48,6 +48,19 @@ dependencies:
   firebase_auth: ^5.3.4
   flutter_dotenv: ^5.1.0
   flutter_config: ^2.0.2
+  flutter_svg: ^2.0.16
+  video_player: ^2.9.2
+  image_picker: ^0.8.7+5
+  video_trimmer: ^2.0.1
+  path_provider: ^2.0.15
+  file_picker: ^8.1.5
+  url_launcher: ^6.3.1
+  intl: ^0.18.0
+  cached_network_image: ^3.4.1
+  google_fonts: ^6.2.1
+  carousel_slider: ^5.0.0
+  geolocator: ^13.0.2
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
