@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:krishi_doctor/Pages/components/NewsCard.dart';
 import 'package:krishi_doctor/Pages/components/PostCard.dart';
 import 'package:krishi_doctor/Pages/components/TestimonialSection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FarmerHomePage extends StatefulWidget {
   const FarmerHomePage({super.key});
@@ -11,13 +14,232 @@ class FarmerHomePage extends StatefulWidget {
 }
 
 class _FarmerHomePageState extends State<FarmerHomePage> {
+  bool _isLocationSaved = false;
+  String _savedLocation = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLocationStatus();
+  }
+
+  Future<void> _checkLocationStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isLocationSaved = prefs.containsKey('user_location');
+      _savedLocation = prefs.getString('user_location') ?? '';
+    });
+
+    if (!_isLocationSaved) {
+      // Delay to ensure widget is built before showing dialog
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showLocationAccessModal();
+      });
+    }
+  }
+
+  Future<void> _requestLocation() async {
+    // Check and request location permissions
+    var status = await Permission.location.request();
+    
+    if (status.isGranted) {
+      try {
+        // Get current position
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+
+        // Save location to SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_location', 
+          '${position.latitude},${position.longitude}'
+        );
+
+        // Update state
+        setState(() {
+          _isLocationSaved = true;
+          _savedLocation = '${position.latitude},${position.longitude}';
+        });
+
+        // Close the modal
+        Navigator.of(context).pop();
+      } catch (e) {
+        // Handle location retrieval error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to retrieve location: $e')),
+        );
+      }
+    } else {
+      // Handle permission denied
+      _showPermissionDeniedDialog();
+    }
+  }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Location Access Denied'),
+          content: Text('Please enable location permissions in your device settings to use this feature.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                openAppSettings();
+              },
+              child: Text('Open Settings'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLocationAccessModal() {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(30),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          height: MediaQuery.of(context).size.height * 0.5,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(30),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                spreadRadius: 5,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Location Icon
+              Icon(
+                Icons.location_on,
+                size: 100,
+                color: Colors.green[700],
+              ),
+              
+              SizedBox(height: 20),
+              
+              // Title
+              Text(
+                'Enable Location Access',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[900],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              SizedBox(height: 15),
+              
+              // Description
+              Text(
+                'We need your location to provide personalized agricultural insights, weather updates, and local crop recommendations.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              SizedBox(height: 30),
+              
+              // Action Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Deny Button
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[100],
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Text(
+                      'Not Now',
+                      style: TextStyle(
+                        color: Colors.red[800],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  
+                  SizedBox(width: 20),
+                  
+                  // Allow Button
+                  ElevatedButton(
+                    onPressed: _requestLocation,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Text(
+                      'Allow Access',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Krishi Mantra'),
         backgroundColor: Colors.green,
+        actions: [
+          // Show saved location in app bar if available
+          if (_isLocationSaved)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(Icons.location_on, color: Colors.white),
+                  Text(
+                    _savedLocation,
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+        ],
       ),
+
       body: Container(
         color: const Color(0xFFF5F5F5), // Background color of body
         child: SingleChildScrollView(
