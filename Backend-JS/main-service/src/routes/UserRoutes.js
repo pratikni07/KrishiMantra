@@ -9,11 +9,10 @@ const {
   updateSubscription
 } = require("../controller/UserController");
 
-// Existing routes
+
 router.get("/users", getUserByPage);
 router.get("/users/:id", getUserById);
 
-// New update routes (assuming you have authentication middleware)
 router.put("/profile", updateUserProfile);
 router.put("/details", updateUserDetails);
 router.put("/subscription", updateSubscription);

@@ -5,6 +5,7 @@ import 'package:krishi_doctor/Login/login_screen.dart';
 import 'package:krishi_doctor/Pages/Screens/ChatScreen.dart';
 import 'package:krishi_doctor/Pages/Screens/CropCalendarPage.dart';
 import 'package:krishi_doctor/Pages/Screens/FarmerEventsPage.dart';
+import 'package:krishi_doctor/Pages/Screens/FeedScreen.dart';
 import 'package:krishi_doctor/Pages/Screens/HomePage.dart';
 import 'package:krishi_doctor/Pages/Screens/NewsPage.dart';
 import 'package:krishi_doctor/Pages/Screens/ReelPage.dart';
@@ -131,11 +132,20 @@ class AppRouter{
 
 
       // news app 
+      // case '/login':
+      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+      //   child: BlocProvider(
+      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
+      //     child: NewsPage(),
+      //   ),
+      // ));
+
+      // Feed section 
       case '/login':
         return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
         child: BlocProvider(
           create: (context)=>LoginBloc(context.read<LoginRepo>()),
-          child: NewsPage(),
+          child: KrishiMantraFeed(),
         ),
       ));
 

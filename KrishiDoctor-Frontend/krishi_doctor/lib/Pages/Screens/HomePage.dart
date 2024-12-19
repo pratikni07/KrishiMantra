@@ -259,7 +259,7 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 9),
                 
                 // Services Grid Section
               //  Container(
@@ -307,7 +307,6 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
               //   ),
 
                 const SizedBox(height: 16),
-
 
                 // Ads Section 
                 Container(
