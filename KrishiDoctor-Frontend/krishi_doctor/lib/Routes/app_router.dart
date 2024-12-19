@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:krishi_doctor/Login/FarmerLoginScreen.dart';
 import 'package:krishi_doctor/Login/Repository/login_repo.dart';
 import 'package:krishi_doctor/Login/login_screen.dart';
 import 'package:krishi_doctor/Pages/Screens/ChatScreen.dart';
 import 'package:krishi_doctor/Pages/Screens/CropCalendarPage.dart';
+import 'package:krishi_doctor/Pages/Screens/CropSelectionPage.dart';
 import 'package:krishi_doctor/Pages/Screens/FarmerEventsPage.dart';
+import 'package:krishi_doctor/Pages/Screens/FarmerProfilePage.dart';
 import 'package:krishi_doctor/Pages/Screens/FeedScreen.dart';
 import 'package:krishi_doctor/Pages/Screens/HomePage.dart';
+import 'package:krishi_doctor/Pages/Screens/LanguageSelectionPage.dart';
 import 'package:krishi_doctor/Pages/Screens/NewsPage.dart';
 import 'package:krishi_doctor/Pages/Screens/ReelPage.dart';
+import 'package:krishi_doctor/Pages/Screens/WeatherScreen.dart';
 import 'package:krishi_doctor/Pages/Screens/company_details_screen.dart';
 import 'package:krishi_doctor/Pages/Screens/company_list_screen.dart';
 import 'package:krishi_doctor/Pages/Screens/product_details_screen.dart';
@@ -28,13 +33,13 @@ class AppRouter{
           ),
         ));
 
-      // case '/login':
-      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
-      //   child: BlocProvider(
-      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
-      //     child: LoginScreen(),
-      //   ),
-      // ));
+      case '/login':
+        return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+        child: BlocProvider(
+          create: (context)=>LoginBloc(context.read<LoginRepo>()),
+          child: LoginScreen(),
+        ),
+      ));
 
       // Home Page
       // case '/login':
@@ -47,7 +52,6 @@ class AppRouter{
 
 
       // Reels page 
-
       //  case '/login':
       //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
       //   child: BlocProvider(
@@ -55,7 +59,6 @@ class AppRouter{
       //     child: ReelsPage(),
       //   ),
       // ));
-
 
 
       // Chat screen
@@ -119,6 +122,8 @@ class AppRouter{
       //   );
 
 
+
+      // CropCalendarScreen
       //  case '/login':
       //   return MaterialPageRoute(
       //     builder: (_) => RepositoryProvider(
@@ -141,13 +146,42 @@ class AppRouter{
       // ));
 
       // Feed section 
-      case '/login':
-        return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
-        child: BlocProvider(
-          create: (context)=>LoginBloc(context.read<LoginRepo>()),
-          child: KrishiMantraFeed(),
-        ),
-      ));
+      // case '/login':
+      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+      //   child: BlocProvider(
+      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
+      //     child: FarmerProfile(),
+      //   ),
+      // ));
+
+      //CropSelectionScreen
+      // case '/login':
+      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+      //   child: BlocProvider(
+      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
+      //     child: CropSelectionScreen(),
+      //   ),
+      // ));
+
+
+      //LanguageSelectionScreen
+      // case '/login':
+      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+      //   child: BlocProvider(
+      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
+      //     child: LanguageSelectionScreen(),
+      //   ),
+      // ));
+
+
+      //WeatherScreen
+      //   case '/login':
+      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+      //   child: BlocProvider(
+      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
+      //     child: WeatherScreen(),
+      //   ),
+      // ));
 
 
       
