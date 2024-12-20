@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.717.0",
     "@nextui-org/card": "^2.2.4",
     "@nextui-org/react": "^2.6.5",
     "@radix-ui/react-dialog": "^1.1.2",
@@ -21,6 +22,7 @@
     "lucide-react": "^0.464.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-dropzone": "^14.3.5",
     "react-router-dom": "^7.0.2",
     "react-simple-maps": "^3.0.0",
     "recharts": "^2.14.1",

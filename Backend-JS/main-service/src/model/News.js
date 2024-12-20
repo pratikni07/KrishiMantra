@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+ 
 const NewsSchema = new mongoose.Schema({
     content: {
         type: String,
