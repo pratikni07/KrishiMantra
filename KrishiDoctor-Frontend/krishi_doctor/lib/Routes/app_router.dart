@@ -11,6 +11,7 @@ import 'package:krishi_doctor/Pages/Screens/FarmerProfilePage.dart';
 import 'package:krishi_doctor/Pages/Screens/FeedScreen.dart';
 import 'package:krishi_doctor/Pages/Screens/HomePage.dart';
 import 'package:krishi_doctor/Pages/Screens/LanguageSelectionPage.dart';
+import 'package:krishi_doctor/Pages/Screens/MarketPriceScreen.dart';
 import 'package:krishi_doctor/Pages/Screens/NewsPage.dart';
 import 'package:krishi_doctor/Pages/Screens/ReelPage.dart';
 import 'package:krishi_doctor/Pages/Screens/WeatherScreen.dart';
@@ -33,13 +34,16 @@ class AppRouter{
           ),
         ));
 
-      case '/login':
-        return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
-        child: BlocProvider(
-          create: (context)=>LoginBloc(context.read<LoginRepo>()),
-          child: LoginScreen(),
-        ),
-      ));
+
+      // login screen
+      // case '/login':
+      //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+      //   child: BlocProvider(
+      //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
+      //     child: LoginScreen(),
+      //   ),
+      // ));
+
 
       // Home Page
       // case '/login':
@@ -75,6 +79,7 @@ class AppRouter{
       //       ),
       //     ),
       //   );
+
 
       // Farmer Event
       //  case '/login':
@@ -145,6 +150,7 @@ class AppRouter{
       //   ),
       // ));
 
+
       // Feed section 
       // case '/login':
       //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
@@ -153,6 +159,7 @@ class AppRouter{
       //     child: FarmerProfile(),
       //   ),
       // ));
+
 
       //CropSelectionScreen
       // case '/login':
@@ -174,8 +181,8 @@ class AppRouter{
       // ));
 
 
-      //WeatherScreen
-      //   case '/login':
+      // WeatherScreen
+      // case '/login':
       //   return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
       //   child: BlocProvider(
       //     create: (context)=>LoginBloc(context.read<LoginRepo>()),
@@ -184,7 +191,16 @@ class AppRouter{
       // ));
 
 
-      
+      // MarketPriceScreen
+      case '/login':
+        return MaterialPageRoute(builder: (_)=>RepositoryProvider(create: (context)=>LoginRepo(),
+        child: BlocProvider(
+          create: (context)=>LoginBloc(context.read<LoginRepo>()),
+          child: MarketPriceScreen(),
+        ),
+      ));
+
+
       default:
         return MaterialPageRoute(builder: (_)=>RepositoryProvider(
           create: (context)=>SplashRepo(),
@@ -195,6 +211,4 @@ class AppRouter{
         ));
     }
   }
-
-
 }
