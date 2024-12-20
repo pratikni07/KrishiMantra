@@ -6,17 +6,8 @@ const mongoose = require("mongoose");
 class NewsController {
     async createNews(req, res) {
         try {
-            const { content, tags } = req.body;
+            const { content, tags,imageUrl } = req.body;
             const uploadedBy = req.user._id;
-
-            let imageUrl = null;
-            if (req.files && req.files.image) {
-                const result = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
-                    folder: "krushi_doctor/news",
-                    resource_type: "image"
-                });
-                imageUrl = result.secure_url;
-            }
 
             const news = new News({
                 content,

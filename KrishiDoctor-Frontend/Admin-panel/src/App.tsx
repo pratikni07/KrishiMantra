@@ -6,7 +6,8 @@ import SideBar from './components/SideBar';
 import DoctorLogin from './Pages/DoctorLogin';
 import Crops from './Pages/Crops';
 import Users from './Pages/Users';
-
+import Company from './Pages/Company'
+import FileUpload from './config/FileUpload';
 function App() {
   const location = useLocation();
   
@@ -22,10 +23,12 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/doctorlogin" element={<DoctorLogin />} />
           <Route path="/" element={<Home />} />
+          <Route path="/company" element={<Company />} />
           <Route path="/crops" element={<Crops />} />
           <Route path="/users" element={<Users />} />
         </Routes>
       </div>
+      
     </div>
   );
 }

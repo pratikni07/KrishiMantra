@@ -30,6 +30,11 @@ const SideBar = () => {
       label: "Crop Management" 
     },
     { 
+      path: "/company", 
+      icon: Leaf, 
+      label: "Company" 
+    },
+    { 
       path: "/users", 
       icon: Users, 
       label: "Users" 

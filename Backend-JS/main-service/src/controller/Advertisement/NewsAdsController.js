@@ -7,14 +7,11 @@ class NewsAdsController {
     async createNewsAd(req, res) {
         try {
             const { title, content, dirURL } = req.body;
-            const file = req.file;
-
-            const cloudinaryResult = file ? await cloudinary.uploader.upload(file.path) : null;
 
             const newNewsAd = new NewsAds({
                 title,
                 content,
-                dirURL: cloudinaryResult ? cloudinaryResult.secure_url : dirURL,
+                dirURL:  dirURL,
                 impression: 0,
                 views: 0,
                 createdAt: new Date().toISOString()
@@ -56,12 +53,7 @@ class NewsAdsController {
         try {
             const { id } = req.params;
             const updateData = req.body;
-            const file = req.file;
-
-            if (file) {
-                const cloudinaryResult = await cloudinary.uploader.upload(file.path);
-                updateData.dirURL = cloudinaryResult.secure_url;
-            }
+           
 
             const updatedAd = await NewsAds.findByIdAndUpdate(id, updateData, { new: true });
 
