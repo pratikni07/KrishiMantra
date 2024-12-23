@@ -12,6 +12,7 @@ const storage = multer.diskStorage({
     }
 });
 
+console.log("tetsinf")
 const upload = multer({ storage: storage });
 
 const HomeAdsController = require('../controller/Advertisement/HomeAdsController');
