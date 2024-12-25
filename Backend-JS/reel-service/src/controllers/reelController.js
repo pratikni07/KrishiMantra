@@ -1,154 +1,220 @@
-const Reel = require('../models/Reel');
-const { uploadToS3 } = require('../config/s3');
-const { processVideo } = require('../utils/videoProcessor');
+// controllers/reelController.js
+const ReelService = require("../services/reelService");
+const TagService = require("../services/tagService");
+const catchAsync = require("../utils/catchAsync");
 
-// Create a new reel
-exports.createReel = async (req, res) => {
-  try {
-    const file = req.file;
-    if (!file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
+class ReelController {
+  static createReel = catchAsync(async (req, res) => {
+    const { userId, userName, profilePhoto, description, mediaUrl, location } =
+      req.body;
+    // const { userId, userName, profilePhoto } = req.user;
 
-    // Process video
-    const processedVideo = await processVideo(file);
-
-    // Upload to S3
-    const videoUrl = await uploadToS3(processedVideo);
-
-    // Create reel document
-    const reel = new Reel({
-      user: {
-        userId: req.user._id,
-        userName: req.user.username
-      },
-      videoUrl,
-      description: req.body.description,
-      hashtags: req.body.hashtags?.split(',') || [],
-      s3Key: videoUrl.split('/').pop()
+    const reel = await ReelService.createReel({
+      userId,
+      userName,
+      profilePhoto,
+      description,
+      mediaUrl,
+      location,
     });
-
-    await reel.save();
 
     res.status(201).json({
-      message: 'Reel uploaded successfully',
-      reel
+      status: "success",
+      data: reel,
     });
-  } catch (error) {
-    res.status(500).json({ 
-      message: 'Error uploading reel', 
-      error: error.message 
-    });
-  }
-};
+  });
 
-// Get reels with pagination (7 reels per page)
-exports.getReels = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 7; // Fixed to 7 reels per page as requested
-    const skip = (page - 1) * limit;
-
-    // Fetch reels with pagination
-    const reels = await Reel.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .select('-views.view -likes.like -comments.comment'); // Exclude detailed view/like/comment arrays
-
-    // Count total reels for pagination info
-    const totalReels = await Reel.countDocuments();
-    const totalPages = Math.ceil(totalReels / limit);
+  static getReels = catchAsync(async (req, res) => {
+    const { page = 1, limit = 10 } = req.query;
+    const reels = await ReelService.getReels(parseInt(page), parseInt(limit));
 
     res.json({
-      reels,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalReels,
-        reelsPerPage: limit
-      }
+      status: "success",
+      data: reels,
     });
-  } catch (error) {
-    res.status(500).json({ 
-      message: 'Error fetching reels', 
-      error: error.message 
-    });
-  }
-};
+  });
 
-// Like a reel
-exports.likeReel = async (req, res) => {
-  try {
-    const reel = await Reel.findById(req.params.reelId);
+  static getReel = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const { page = 1, limit = 10 } = req.query;
 
-    if (!reel) {
-      return res.status(404).json({ message: 'Reel not found' });
-    }
-
-    // Check if user already liked the reel
-    const alreadyLiked = reel.likes.like.some(
-      like => like.userId.toString() === req.user._id.toString()
+    const reel = await ReelService.getReelWithComments(
+      id,
+      parseInt(page),
+      parseInt(limit)
     );
 
-    if (alreadyLiked) {
-      // Unlike the reel
-      reel.likes.like = reel.likes.like.filter(
-        like => like.userId.toString() !== req.user._id.toString()
-      );
-      reel.likes.type = Math.max(0, reel.likes.type - 1);
-    } else {
-      // Like the reel
-      reel.likes.like.push({
-        userId: req.user._id,
-        userName: req.user.username
+    if (!reel) {
+      return res.status(404).json({
+        status: "error",
+        message: "Reel not found",
       });
-      reel.likes.type += 1;
     }
-
-    await reel.save();
 
     res.json({
-      message: alreadyLiked ? 'Reel unliked' : 'Reel liked',
-      likes: reel.likes.type
+      status: "success",
+      data: reel,
     });
-  } catch (error) {
-    res.status(500).json({ 
-      message: 'Error liking reel', 
-      error: error.message 
+  });
+
+  static getTrendingReels = catchAsync(async (req, res) => {
+    const { page = 1, limit = 10 } = req.query;
+    const reels = await ReelService.getTrendingReels(
+      parseInt(page),
+      parseInt(limit)
+    );
+
+    res.json({
+      status: "success",
+      data: reels,
     });
-  }
-};
+  });
 
-// Add a comment to a reel
-exports.addComment = async (req, res) => {
-  try {
-    const reel = await Reel.findById(req.params.reelId);
+  static likeReel = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const { userId, userName, profilePhoto } = req.body;
+    // const { userId, userName, profilePhoto } = req.user;
 
-    if (!reel) {
-      return res.status(404).json({ message: 'Reel not found' });
-    }
-
-    const newComment = {
-      userId: req.user._id,
-      userName: req.user.username,
-      comment: req.body.comment,
-      likes: 0
-    };
-
-    reel.comments.comment.push(newComment);
-    reel.comments.type += 1;
-
-    await reel.save();
+    const like = await ReelService.likeReel(id, {
+      userId,
+      userName,
+      profilePhoto,
+    });
 
     res.status(201).json({
-      message: 'Comment added successfully',
-      comment: newComment
+      status: "success",
+      data: like,
     });
-  } catch (error) {
-    res.status(500).json({ 
-      message: 'Error adding comment', 
-      error: error.message 
+  });
+
+  static unlikeReel = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const { userId } = req.body;
+    // const { userId } = req.user;
+
+    const result = await ReelService.unlikeReel(id, userId);
+
+    if (!result) {
+      return res.status(404).json({
+        status: "error",
+        message: "Like not found",
+      });
+    }
+
+    res.json({
+      status: "success",
+      message: "Reel unliked successfully",
     });
-  }
-};
+  });
+
+  static addComment = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const { userId, userName, profilePhoto, content, parentComment } = req.body;
+    // const { userId, userName, profilePhoto } = req.user;
+
+    const comment = await ReelService.addComment(id, {
+      userId,
+      userName,
+      profilePhoto,
+      content,
+      parentComment,
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: comment,
+    });
+  });
+
+  static deleteComment = catchAsync(async (req, res) => {
+    const { commentId } = req.params;
+    const { userId } = req.body;
+    // const { userId } = req.user;
+
+    await ReelService.deleteComment(commentId, userId);
+
+    res.json({
+      status: "success",
+      message: "Comment deleted successfully",
+    });
+  });
+
+  static getUserReels = catchAsync(async (req, res) => {
+    const { userId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    const reels = await ReelService.getUserReels(
+      userId,
+      parseInt(page),
+      parseInt(limit)
+    );
+
+    res.json({
+      status: "success",
+      data: reels,
+    });
+  });
+
+  static deleteReel = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const { userId } = req.body;
+    // const { userId } = req.user;
+
+    await ReelService.deleteReel(id, userId);
+
+    res.json({
+      status: "success",
+      message: "Reel deleted successfully",
+    });
+  });
+
+  static searchReels = catchAsync(async (req, res) => {
+    const { q, page = 1, limit = 10 } = req.query;
+
+    if (!q) {
+      return res.status(400).json({
+        status: "error",
+        message: "Search query is required",
+      });
+    }
+
+    const reels = await ReelService.searchReels(
+      q,
+      parseInt(page),
+      parseInt(limit)
+    );
+
+    res.json({
+      status: "success",
+      data: reels,
+    });
+  });
+
+  static getTrendingTags = catchAsync(async (req, res) => {
+    const { limit = 10 } = req.query;
+    const tags = await TagService.getTrendingTags(parseInt(limit));
+
+    res.json({
+      status: "success",
+      data: tags,
+    });
+  });
+
+  static getReelsByTag = catchAsync(async (req, res) => {
+    const { tag } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    const reels = await TagService.getReelsByTag(
+      tag,
+      parseInt(page),
+      parseInt(limit)
+    );
+
+    res.json({
+      status: "success",
+      data: reels,
+    });
+  });
+}
+
+module.exports = ReelController;

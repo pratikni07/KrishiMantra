@@ -1,33 +1,16 @@
-const express = require('express');
+// routes/feedRoutes.js
+
+const express = require("express");
 const router = express.Router();
-const FeedController = require('../controller/feedController');
-// const { 
-//   validateFeedCreation, 
-//   // authenticateUser, 
-//   uploadMiddleware 
-// } = require('../middleware');
+const feedController = require("../controller/feedController");
 
-// Create new feed
-router.post(
-  '/create', 
-  // authenticateUser,
-  // uploadMiddleware.single('media'),
-  // validateFeedCreation,
-  FeedController.createFeed
-);
+// Feed routes
+router.post("/", feedController.createFeed);
+router.get("/:feedId", feedController.getFeed);
+router.post("/:feedId/comment", feedController.addComment);
+router.post("/:feedId/like", feedController.toggleLike);
+router.get("/tag/:tagName/feeds", feedController.getFeedsByTag);
 
-// Get feeds with pagination and filtering
-router.get(
-  '/', 
-  // authenticateUser,
-  FeedController.getFeeds
-);
-
-// Delete a specific feed
-router.delete(
-  '/:feedId', 
-  // authenticateUser,
-  FeedController.deleteFeed
-);
+router.get("/feeds/random", feedController.getRandomFeeds);
 
 module.exports = router;

@@ -1,62 +1,64 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const FeedSchema = new mongoose.Schema({
-    userId:{
-        type: String
+  userId: {
+    type: String,
+  },
+  userName: {
+    type: String,
+  },
+  profilePhoto: {
+    type: String,
+  },
+  description: {
+    type: String,
+  },
+  content: {
+    type: String,
+  },
+  mediaUrl: {
+    type: String,
+  },
+  like: {
+    count: {
+      type: Number,
     },
-    userName:{
-        type: String
+    // likes: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Likes",
+    //   },
+    // ],
+  },
+  comment: {
+    count: {
+      type: Number,
     },
-    profilePhoto:{
-        type: String
+    // comments: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Comments",
+    //   },
+    // ],
+  },
+  location: {
+    latitude: {
+      type: Number,
+      required: true,
+      min: [-90, "Latitude must be between -90 and 90"],
+      max: [90, "Latitude must be between -90 and 90"],
     },
-    description: {
-        type:String,
+    longitude: {
+      type: Number,
+      required: true,
+      min: [-180, "Longitude must be between -180 and 180"],
+      max: [180, "Longitude must be between -180 and 180"],
     },
-    content:{
-        type:String,
-    },
-    like:{
-        count:{
-            type:Number,
-        },
-        likes:[
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Likes'
-            }
-        ]
-    },
-    comment:{
-        count:{
-            type:Number,
-        },
-        comments:[
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Comments'
-            }
-        ]
-    },
-    tags:[
-        {
-            type:{
-                type:String
-            }
-        }
-    ],
-    locaion:{
-        lantitude:{
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-        },
-        langitude:{
-
-        }
-    },
-    date:{
-        type:Date,
-        default:Date.now
-    }
-})
-
-module.exports = mongoose.model("Feed",FeedSchema)
+module.exports = mongoose.model("Feed", FeedSchema);

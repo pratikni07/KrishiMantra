@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:krishi_mantra/screens/LanguageSelectionPage.dart';
+import 'package:krishi_mantra/screens/features/company/company_list_screen.dart';
 import 'package:krishi_mantra/screens/features/news/NewsPage.dart';
 import 'package:krishi_mantra/screens/loginScreen/Repository/login_repo.dart';
 import '../screens/loginScreen/bloc/login_bloc.dart';
@@ -18,9 +19,10 @@ class Routes {
       case splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       case home:
-        // return MaterialPageRoute(builder: (_) => const FarmerHomePage());
-        // return MaterialPageRoute(builder: (_) => const LanguageSelectionScreen());
-        return MaterialPageRoute(builder: (_) => const NewsPage());
+        return MaterialPageRoute(builder: (_) => CompanyListScreen());
+      // return MaterialPageRoute(builder: (_) => const FarmerHomePage());
+      // return MaterialPageRoute(builder: (_) => const LanguageSelectionScreen());
+      // return MaterialPageRoute(builder: (_) => const NewsPage());
       case login:
         return MaterialPageRoute(
           builder: (_) => RepositoryProvider(
