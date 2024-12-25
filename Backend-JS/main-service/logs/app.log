@@ -147,3 +147,53 @@
 {"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-10T07:33:00.103Z"}
 {"level":"info","message":"Server is shutting down...","timestamp":"2024-12-10T07:33:39.611Z"}
 {"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-10T07:33:41.404Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:40:33.167Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:41:14.985Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-24T18:42:18.038Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:42:20.497Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:42:33.803Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:43:41.026Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:43:46.965Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:43:55.197Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:49:47.906Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:52:34.985Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:53:00.801Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:53:30.142Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:53:38.993Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:54:21.270Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:54:46.462Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:58:37.890Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T18:59:25.318Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:00:10.279Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:06:46.563Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:17:34.577Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:17:37.482Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:18:28.052Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:18:32.720Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:18:36.350Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:18:39.563Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:18:44.116Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:18:48.400Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:20:23.782Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:20:33.612Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:20:36.903Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:20:40.181Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:20:49.432Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:20:53.025Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:21:02.328Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T19:24:59.574Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T20:48:29.413Z"}
+{"level":"error","message":"BadRequestError: request aborted\n    at IncomingMessage.onAborted (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/raw-body/index.js:245:10)\n    at IncomingMessage.emit (node:events:513:28)\n    at IncomingMessage._destroy (node:_http_incoming:221:10)\n    at _destroy (node:internal/streams/destroy:122:10)\n    at IncomingMessage.destroy (node:internal/streams/destroy:84:5)\n    at abortIncoming (node:_http_server:809:9)\n    at socketOnClose (node:_http_server:803:3)\n    at Socket.emit (node:events:525:35)\n    at TCP.<anonymous> (node:net:351:12)","timestamp":"2024-12-24T20:50:04.662Z"}
+{"level":"error","message":"BadRequestError: request aborted\n    at IncomingMessage.onAborted (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/raw-body/index.js:245:10)\n    at IncomingMessage.emit (node:events:513:28)\n    at IncomingMessage._destroy (node:_http_incoming:221:10)\n    at _destroy (node:internal/streams/destroy:122:10)\n    at IncomingMessage.destroy (node:internal/streams/destroy:84:5)\n    at abortIncoming (node:_http_server:809:9)\n    at socketOnClose (node:_http_server:803:3)\n    at Socket.emit (node:events:525:35)\n    at TCP.<anonymous> (node:net:351:12)","timestamp":"2024-12-24T20:50:04.673Z"}
+{"level":"error","message":"BadRequestError: request aborted\n    at IncomingMessage.onAborted (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/raw-body/index.js:245:10)\n    at IncomingMessage.emit (node:events:513:28)\n    at IncomingMessage._destroy (node:_http_incoming:221:10)\n    at _destroy (node:internal/streams/destroy:122:10)\n    at IncomingMessage.destroy (node:internal/streams/destroy:84:5)\n    at abortIncoming (node:_http_server:809:9)\n    at socketOnClose (node:_http_server:803:3)\n    at Socket.emit (node:events:525:35)\n    at TCP.<anonymous> (node:net:351:12)","timestamp":"2024-12-24T20:50:04.675Z"}
+{"level":"error","message":"BadRequestError: request aborted\n    at IncomingMessage.onAborted (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/raw-body/index.js:245:10)\n    at IncomingMessage.emit (node:events:513:28)\n    at IncomingMessage._destroy (node:_http_incoming:221:10)\n    at _destroy (node:internal/streams/destroy:122:10)\n    at IncomingMessage.destroy (node:internal/streams/destroy:84:5)\n    at abortIncoming (node:_http_server:809:9)\n    at socketOnClose (node:_http_server:803:3)\n    at Socket.emit (node:events:525:35)\n    at TCP.<anonymous> (node:net:351:12)","timestamp":"2024-12-24T20:50:04.676Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-24T20:51:40.440Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-24T20:51:43.801Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-25T03:44:21.006Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-25T04:54:19.262Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-25T12:41:49.558Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-25T13:30:50.506Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-25T13:30:53.664Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-25T16:01:28.882Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-25T16:02:24.728Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-25T16:10:16.480Z"}

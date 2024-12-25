@@ -1,30 +1,25 @@
-const express = require('express');
-const { 
-  createReel, 
-  getReels, 
-  likeReel,
-  addComment
-} = require('../controllers/reelController');
-const { authMiddleware } = require('../middleware/authMiddleware');
-const { uploadMiddleware } = require('../middleware/uploadMiddleware');
-
+// routes/reelRoutes.js
+const express = require("express");
+const ReelController = require("../controllers/reelController");
 const router = express.Router();
 
-// Upload a new reel
-router.post(
-  '/upload', 
-  authMiddleware, 
-  uploadMiddleware.single('video'), 
-  createReel
-);
+// Public routes
+router.get("/search", ReelController.searchReels);
+router.get("/trending", ReelController.getTrendingReels);
+router.get("/tags/trending", ReelController.getTrendingTags);
+router.get("/tags/:tag", ReelController.getReelsByTag);
+router.get("/user/:userId", ReelController.getUserReels);
+router.get("/:id", ReelController.getReel);
+router.get("/", ReelController.getReels);
 
-// Get paginated reels
-router.get('/', authMiddleware, getReels);
+// Protected routes - require authentication
+// router.use(authMiddleware);
 
-// Like/Unlike a reel
-router.post('/:reelId/like', authMiddleware, likeReel);
-
-// Add a comment to a reel
-router.post('/:reelId/comment', authMiddleware, addComment);
+router.post("/", ReelController.createReel);
+router.delete("/:id", ReelController.deleteReel);
+router.post("/:id/like", ReelController.likeReel);
+router.delete("/:id/like", ReelController.unlikeReel);
+router.post("/:id/comments", ReelController.addComment);
+router.delete("/comments/:commentId", ReelController.deleteComment);
 
 module.exports = router;

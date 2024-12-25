@@ -11,7 +11,14 @@ export const endpoints = {
   GET_USER_DETAILS_API: BASE_URL + "/auth/users/",
 };
 
-
 export const usersendpoints = {
-  GET_ALL_USER_API : BASE_URL + "/main/user/users"
+  GET_ALL_USER_API: BASE_URL + "/main/user/users",
 };
+
+export const company = {
+  GET_ALL_COMPANY_API: BASE_URL + "/main/companies",
+
+  ADD_COMPANY_API: BASE_URL + "/main/companies",
+};
+
+// http://localhost:3001/api/main/companies

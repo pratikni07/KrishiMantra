@@ -1,80 +1,60 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const ReelSchema = new mongoose.Schema({
-  user: {
+const ReelSchema = new mongoose.Schema(
+  {
     userId: {
       type: String,
-      required: true
+      required: true,
     },
     userName: {
       type: String,
-      required: true
-    }
-  },
-  videoUrl: {
-    type: String,
-    required: true
-  },
-  description: String,
-  likes: {
-    type: Number,
-    default: 0,
-    like: [{
-      userId: {
-        type: String,
-        require:true
-      },
-      userName: String,
-      createdAt: {
-        type: Date,
-        default: Date.now
-      }
-    }]
-  },
-  comments: {
-    type: Number,
-    default: 0,
-    comment: [{
-      userId: {
-        type: String,
-        require:true
-      },
-      userName: String,
-      comment: String,
-      likes: {
+      required: true,
+    },
+    profilePhoto: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    mediaUrl: {
+      type: String,
+      required: true,
+    },
+    like: {
+      count: {
         type: Number,
-        default: 0
+        default: 0,
       },
-      createdAt: {
-        type: Date,
-        default: Date.now
-      }
-    }]
-  },
-  views: {
-    type: Number,
-    default: 0,
-    view: [{
-      userId: {
-        type: String,
-        require:true
+    },
+    comment: {
+      count: {
+        type: Number,
+        default: 0,
       },
-      userName: String,
-      createdAt: {
-        type: Date,
-        default: Date.now
-      }
-    }]
+    },
+    location: {
+      latitude: {
+        type: Number,
+        min: [-90, "Latitude must be between -90 and 90"],
+        max: [90, "Latitude must be between -90 and 90"],
+      },
+      longitude: {
+        type: Number,
+        min: [-180, "Longitude must be between -180 and 180"],
+        max: [180, "Longitude must be between -180 and 180"],
+      },
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  hashtags: [String],
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  s3Key: {
-    type: String,
-    required: true
+  {
+    timestamps: true,
   }
-});
+);
 
-module.exports = mongoose.model('Reel', ReelSchema);
+ReelSchema.index({ userId: 1, createdAt: -1 });
+ReelSchema.index({ "like.count": -1, createdAt: -1 });
+
+module.exports = mongoose.model("Reel", ReelSchema);

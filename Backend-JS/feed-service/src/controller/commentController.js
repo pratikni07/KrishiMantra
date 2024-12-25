@@ -1,34 +1,36 @@
-const Comment = require('../model/CommetModel');
-const Feed = require('../model/FeedModel');
-const { redisCache } = require('../utils/redis');
+const Comment = require("../model/CommetModel");
+const Feed = require("../model/FeedModel");
+const { redisCache } = require("../config/redis");
 
 class CommentController {
   // Create a new comment
   static async createComment(req, res) {
     try {
-      const { 
-        userId, 
-        userName, 
-        profilePhoto, 
-        feedId, 
-        content, 
-        parentCommentId 
+      const {
+        userId,
+        userName,
+        profilePhoto,
+        feedId,
+        content,
+        parentCommentId,
       } = req.body;
 
       // Find the feed
       const feed = await Feed.findById(feedId);
       if (!feed) {
-        return res.status(404).json({ message: 'Feed not found' });
+        return res.status(404).json({ message: "Feed not found" });
       }
 
       // Determine comment depth
-      const depth = parentCommentId 
-        ? (await Comment.findById(parentCommentId)).depth + 1 
+      const depth = parentCommentId
+        ? (await Comment.findById(parentCommentId)).depth + 1
         : 0;
 
       // Check depth limit
       if (depth >= 5) {
-        return res.status(400).json({ message: 'Maximum comment nesting depth reached' });
+        return res
+          .status(400)
+          .json({ message: "Maximum comment nesting depth reached" });
       }
 
       // Create new comment
@@ -39,7 +41,7 @@ class CommentController {
         feed: feedId,
         content,
         parentComment: parentCommentId || null,
-        depth
+        depth,
       });
 
       // Save comment
@@ -47,14 +49,14 @@ class CommentController {
 
       // Update feed comment count
       await Feed.findByIdAndUpdate(feedId, {
-        $inc: { 'comment.count': 1 },
-        $push: { 'comment.comments': newComment._id }
+        $inc: { "comment.count": 1 },
+        $push: { "comment.comments": newComment._id },
       });
 
       // If this is a reply, update parent comment
       if (parentCommentId) {
         await Comment.findByIdAndUpdate(parentCommentId, {
-          $push: { replies: newComment._id }
+          $push: { replies: newComment._id },
         });
       }
 
@@ -63,9 +65,9 @@ class CommentController {
 
       res.status(201).json(newComment);
     } catch (error) {
-      res.status(500).json({ 
-        message: 'Error creating comment', 
-        error: error.message 
+      res.status(500).json({
+        message: "Error creating comment",
+        error: error.message,
       });
     }
   }
@@ -73,17 +75,17 @@ class CommentController {
   // Get comments for a specific feed with pagination
   static async getComments(req, res) {
     try {
-      const { 
-        feedId, 
-        page = 1, 
-        limit = 10, 
-        sortBy = 'createdAt', 
-        sortOrder = 'desc' 
+      const {
+        feedId,
+        page = 1,
+        limit = 10,
+        sortBy = "createdAt",
+        sortOrder = "desc",
       } = req.query;
 
       // Create cache key
       const cacheKey = `comments:${feedId}:${page}:${limit}:${sortBy}:${sortOrder}`;
-      
+
       // Check cache
       const cachedComments = await redisCache.get(cacheKey);
       if (cachedComments) {
@@ -94,18 +96,18 @@ class CommentController {
       const options = {
         page: parseInt(page),
         limit: parseInt(limit),
-        sort: { 
-          [sortBy]: sortOrder === 'desc' ? -1 : 1 
+        sort: {
+          [sortBy]: sortOrder === "desc" ? -1 : 1,
         },
         populate: [
-          { path: 'replies', select: 'content userName createdAt' },
-          { path: 'parentComment', select: 'content userName' }
+          { path: "replies", select: "content userName createdAt" },
+          { path: "parentComment", select: "content userName" },
         ],
         // Only fetch top-level comments
-        match: { 
-          feed: feedId, 
-          parentComment: null 
-        }
+        match: {
+          feed: feedId,
+          parentComment: null,
+        },
       };
 
       // Fetch paginated comments
@@ -116,9 +118,9 @@ class CommentController {
 
       res.json(comments);
     } catch (error) {
-      res.status(500).json({ 
-        message: 'Error fetching comments', 
-        error: error.message 
+      res.status(500).json({
+        message: "Error fetching comments",
+        error: error.message,
       });
     }
   }
@@ -136,7 +138,7 @@ class CommentController {
       );
 
       if (!updatedComment) {
-        return res.status(404).json({ message: 'Comment not found' });
+        return res.status(404).json({ message: "Comment not found" });
       }
 
       // Invalidate specific comment cache
@@ -144,9 +146,9 @@ class CommentController {
 
       res.json(updatedComment);
     } catch (error) {
-      res.status(500).json({ 
-        message: 'Error updating comment', 
-        error: error.message 
+      res.status(500).json({
+        message: "Error updating comment",
+        error: error.message,
       });
     }
   }
@@ -158,7 +160,7 @@ class CommentController {
 
       const comment = await Comment.findById(commentId);
       if (!comment) {
-        return res.status(404).json({ message: 'Comment not found' });
+        return res.status(404).json({ message: "Comment not found" });
       }
 
       // Soft delete
@@ -167,19 +169,19 @@ class CommentController {
 
       // Update feed comment count
       await Feed.findByIdAndUpdate(comment.feed, {
-        $inc: { 'comment.count': -1 },
-        $pull: { 'comment.comments': commentId }
+        $inc: { "comment.count": -1 },
+        $pull: { "comment.comments": commentId },
       });
 
       // Invalidate caches
       await redisCache.invalidatePatterns(`comments:${comment.feed}:*`);
       await redisCache.del(`comment:${commentId}`);
 
-      res.json({ message: 'Comment soft deleted successfully' });
+      res.json({ message: "Comment soft deleted successfully" });
     } catch (error) {
-      res.status(500).json({ 
-        message: 'Error deleting comment', 
-        error: error.message 
+      res.status(500).json({
+        message: "Error deleting comment",
+        error: error.message,
       });
     }
   }
@@ -192,27 +194,27 @@ class CommentController {
 
       const comment = await Comment.findByIdAndUpdate(
         commentId,
-        { 
-          $push: { 
-            reports: { 
-              userId, 
-              reason, 
-              createdAt: new Date() 
-            } 
-          } 
+        {
+          $push: {
+            reports: {
+              userId,
+              reason,
+              createdAt: new Date(),
+            },
+          },
         },
         { new: true }
       );
 
       if (!comment) {
-        return res.status(404).json({ message: 'Comment not found' });
+        return res.status(404).json({ message: "Comment not found" });
       }
 
-      res.json({ message: 'Comment reported successfully' });
+      res.json({ message: "Comment reported successfully" });
     } catch (error) {
-      res.status(500).json({ 
-        message: 'Error reporting comment', 
-        error: error.message 
+      res.status(500).json({
+        message: "Error reporting comment",
+        error: error.message,
       });
     }
   }

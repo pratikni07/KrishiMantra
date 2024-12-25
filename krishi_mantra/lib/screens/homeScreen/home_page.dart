@@ -1,10 +1,48 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:krishi_mantra/API/HomeScreenAPI.dart';
 import 'package:krishi_mantra/screens/components/PostCard.dart';
 import 'package:krishi_mantra/screens/components/TestimonialSection.dart';
 import 'package:krishi_mantra/screens/components/NewsCard.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class AdCarousel extends StatelessWidget {
+  final List<Map<String, dynamic>> ads;
+
+  const AdCarousel({super.key, required this.ads});
+
+  @override
+  Widget build(BuildContext context) {
+    return ads.isEmpty
+        ? const SizedBox.shrink()
+        : SizedBox(
+            height: 100,
+            child: PageView.builder(
+              itemCount: ads.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  child: ClipRRect(
+                    child: SizedBox(
+                      child: Image.network(
+                        ads[index]['dirURL'],
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.error),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+  }
+}
 
 class FarmerHomePage extends StatefulWidget {
   const FarmerHomePage({super.key});
@@ -17,11 +55,52 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
   int _currentIndex = 0;
   bool _isLocationSaved = false;
   String _savedLocation = '';
+  List<Map<String, dynamic>> priority1Ads = [];
+  List<Map<String, dynamic>> priority2Ads = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    fetchAds();
     _checkLocationStatus();
+  }
+
+  Future<void> fetchAds() async {
+    try {
+      final response = await ApiService().getHomeScreenAds();
+
+      if (response.statusCode == 200) {
+        final List<dynamic> adsData = json.decode(response.body);
+
+        setState(() {
+          priority1Ads = adsData
+              .where((ad) => ad['prority'] == 1)
+              .map((ad) => Map<String, dynamic>.from(ad))
+              .toList();
+
+          priority2Ads = adsData
+              .where((ad) => ad['prority'] == 2)
+              .map((ad) => Map<String, dynamic>.from(ad))
+              .toList();
+
+          print('Priority 1 Ads: $priority1Ads');
+          print('Priority 2 Ads: $priority2Ads');
+
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load ads: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error in fetchAds: $e'); // Debug print
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading ads: $e')),
+      );
+    }
   }
 
   Future<void> _checkLocationStatus() async {
@@ -40,7 +119,7 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
 
   Future<void> _requestLocation() async {
     var status = await Permission.location.request();
-    
+
     if (status.isGranted) {
       try {
         Position position = await Geolocator.getCurrentPosition(
@@ -48,9 +127,8 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
         );
 
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user_location', 
-          '${position.latitude},${position.longitude}'
-        );
+        await prefs.setString(
+            'user_location', '${position.latitude},${position.longitude}');
 
         setState(() {
           _isLocationSaved = true;
@@ -74,7 +152,8 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Location Access Denied'),
-          content: const Text('Please enable location permissions in your device settings to use this feature.'),
+          content: const Text(
+              'Please enable location permissions in your device settings to use this feature.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -144,7 +223,8 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red[100],
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -162,7 +242,8 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
                     onPressed: _requestLocation,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -184,24 +265,16 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
     );
   }
 
-  final List<Widget> _pages = [
-    const HomeContent(),
-    const Center(child: Text('Feed Page')),
-    const Center(child: Text('Crop Care Page')),
-    const Center(child: Text('Mandi Page')),
-    const Center(child: Text('Profile Page')),
-  ];
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex],
+      body: _currentIndex == 0
+          ? HomeContent(
+              priority1Ads: priority1Ads,
+              priority2Ads: priority2Ads,
+              isLoading: isLoading,
+            )
+          : _pages[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -260,10 +333,57 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
       ),
     );
   }
+
+  final List<Widget> _pages = [
+    const Center(child: Text('Home Page')),
+    const Center(child: Text('Feed Page')),
+    const Center(child: Text('Crop Care Page')),
+    const Center(child: Text('Mandi Page')),
+    const Center(child: Text('Profile Page')),
+  ];
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 }
 
 class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
+  final List<Map<String, dynamic>> priority1Ads;
+  final List<Map<String, dynamic>> priority2Ads;
+  final bool isLoading;
+
+  const HomeContent({
+    super.key,
+    this.priority1Ads = const [],
+    this.priority2Ads = const [],
+    this.isLoading = false,
+  });
+
+  Widget _buildWeatherItem(IconData icon, String label, String value) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -277,115 +397,132 @@ class HomeContent extends StatelessWidget {
             backgroundColor: const Color(0xFF4CAF50),
             flexibleSpace: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                bool isCollapsed = constraints.biggest.height <= kToolbarHeight + 30;
-                
+                bool isCollapsed =
+                    constraints.biggest.height <= kToolbarHeight + 30;
+
                 return FlexibleSpaceBar(
                   background: Container(
                     color: const Color(0xFF4CAF50),
-                    child: !isCollapsed ? Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.fromLTRB(16, 50, 16, 0),
+                    child: !isCollapsed
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.fromLTRB(16, 50, 16, 0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.waving_hand,
+                                                color: Color.fromARGB(
+                                                    255, 249, 227, 23)),
+                                            SizedBox(width: 5),
+                                            Text(
+                                              'Hello',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Text(
+                                          'Welcome, Pratik',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Baramati',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.chat_bubble_outline,
+                                            color: Colors.white),
+                                        SizedBox(width: 16),
+                                        Icon(Icons.notifications_none,
+                                            color: Colors.white),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _buildWeatherItem(
+                                        Icons.thermostat, "Temp", "40 C"),
+                                    _buildWeatherItem(
+                                        Icons.water_drop, "Humidity", "35%"),
+                                    _buildWeatherItem(
+                                        Icons.cloud, "Cloud", "- - -"),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : null,
+                  ),
+                  titlePadding: EdgeInsets.zero,
+                  title: isCollapsed
+                      ? const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.waving_hand, color: Color.fromARGB(255, 249, 227, 23)),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        'Hello',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      
-                                      
-                                    ],
+                                  Text(
+                                    'Hello',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
                                   ),
+                                  SizedBox(width: 4),
+                                  Icon(Icons.waving_hand,
+                                      color: Colors.yellow, size: 16),
+                                  SizedBox(width: 4),
                                   Text(
                                     'Welcome, Pratik',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Baramati',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ],
                               ),
                               Row(
                                 children: [
-                                  Icon(Icons.chat_bubble_outline, color: Colors.white),
+                                  Icon(Icons.chat_bubble_outline,
+                                      color: Colors.white, size: 20),
                                   SizedBox(width: 16),
-                                  Icon(Icons.notifications_none, color: Colors.white),
+                                  Icon(Icons.notifications_none,
+                                      color: Colors.white, size: 20),
                                 ],
                               ),
                             ],
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildWeatherItem(Icons.thermostat, "Temp", "40 C"),
-                              _buildWeatherItem(Icons.water_drop, "Humidity", "35%"),
-                              _buildWeatherItem(Icons.cloud, "Cloud", "- - -"),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ) : null,
-                  ),
-                  titlePadding: EdgeInsets.zero,
-                  title: isCollapsed ? const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Hello',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(Icons.waving_hand, color: Colors.yellow, size: 16),
-                            SizedBox(width: 4),
-                            Text(
-                              'Welcome, Pratik',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.chat_bubble_outline, color: Colors.white, size: 20),
-                            SizedBox(width: 16),
-                            Icon(Icons.notifications_none, color: Colors.white, size: 20),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ) : Container(),
+                        )
+                      : Container(),
                 );
               },
             ),
@@ -411,90 +548,58 @@ class HomeContent extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 9),
+                if (isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else
+                  AdCarousel(ads: priority1Ads),
 
-                Container(
-                  child: Image.network(
-                    'https://yojnaias.com/wp-content/uploads/2023/04/PM-KISAN.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-
+                // testonmial
                 TestimonialSection(),
-
                 const FacebookPostCard(
                   username: "John Doe",
-                  profileImageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR7ahvb8aEN76vOIivqeFpa9_gBV5rZm2erw&s",
+                  profileImageUrl:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR7ahvb8aEN76vOIivqeFpa9_gBV5rZm2erw&s",
                   postTime: "2 hours ago",
-                  postContent: "Check out this beautiful landscape! Check out this beautiful landscape!Check out this beautiful landscape!Check out this beautiful landscape!Check out this beautiful landscape!",
-                  mediaUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR7ahvb8aEN76vOIivqeFpa9_gBV5rZm2erw&s",
+                  postContent:
+                      "Check out this beautiful landscape! Check out this beautiful landscape!Check out this beautiful landscape!Check out this beautiful landscape!Check out this beautiful landscape!",
+                  mediaUrl:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR7ahvb8aEN76vOIivqeFpa9_gBV5rZm2erw&s",
                   mediaType: MediaType.image,
                 ),
-
-                Container(
-                  child: Image.network(
-                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReOD9y7ioHCt1dsX7uX41otL_fIWZxgE6SPA&s',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-
-                  const SizedBox(height: 26),
-                  
-                  // News Section
-                  const Center(
-                    child: Text(
-                      'News',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF008336),
-                      ),
+                AdCarousel(ads: priority2Ads),
+                const SizedBox(height: 26),
+                const Center(
+                  child: Text(
+                    'News',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF008336),
                     ),
                   ),
-
-                  const SizedBox(height: 20),
-                  
-                  NewsCard(
-                    title: 'Major Breakthrough in Renewable Energy Research',
-                    imageUrl: 'https://images.hindustantimes.com/rf/image_size_960x540/HT/p2/2018/12/26/Pictures/files-india-weather-monsoon_b5f4a298-0917-11e9-8b39-01e96223c804.jpg',
-                    content: 'Scientists at the University of Technology have developed a new type of solar panel that is 20% more efficient than traditional designs. This breakthrough could significantly reduce the cost of solar power and accelerate the transition to renewable energy.',
-                    publishedDate: DateTime(2023, 5, 15),
-                  ),
-                  
-                  NewsCard(
-                    title: 'Major Breakthrough in Renewable Energy Research',
-                    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRydbhrDtLoiZYJ8rHtmqTUqxJtxnmQr6i0Pg&s',
-                    content: 'Scientists at the University of Technology have developed a new type of solar panel that is 20% more efficient than traditional designs. This breakthrough could significantly reduce the cost of solar power and accelerate the transition to renewable energy.',
-                    publishedDate: DateTime(2023, 5, 15),
-                  ),
+                ),
+                const SizedBox(height: 20),
+                NewsCard(
+                  title: 'Major Breakthrough in Renewable Energy Research',
+                  imageUrl:
+                      'https://images.hindustantimes.com/rf/image_size_960x540/HT/p2/2018/12/26/Pictures/files-india-weather-monsoon_b5f4a298-0917-11e9-8b39-01e96223c804.jpg',
+                  content:
+                      'Scientists at the University of Technology have developed a new type of solar panel that is 20% more efficient than traditional designs. This breakthrough could significantly reduce the cost of solar power and accelerate the transition to renewable energy.',
+                  publishedDate: DateTime(2023, 5, 15),
+                ),
+                NewsCard(
+                  title: 'Major Breakthrough in Renewable Energy Research',
+                  imageUrl:
+                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRydbhrDtLoiZYJ8rHtmqTUqxJtxnmQr6i0Pg&s',
+                  content:
+                      'Scientists at the University of Technology have developed a new type of solar panel that is 20% more efficient than traditional designs. This breakthrough could significantly reduce the cost of solar power and accelerate the transition to renewable energy.',
+                  publishedDate: DateTime(2023, 5, 15),
+                ),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildWeatherItem(IconData icon, String label, String value) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ),
-      ],
     );
   }
 }

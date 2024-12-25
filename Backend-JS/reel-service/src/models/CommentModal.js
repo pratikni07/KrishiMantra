@@ -4,16 +4,19 @@ const CommentSchema = new mongoose.Schema(
   {
     userId: {
       type: String,
+      required: true,
     },
     userName: {
       type: String,
+      required: true,
     },
     profilePhoto: {
       type: String,
     },
-    feed: {
+    reel: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Feed",
+      ref: "Reel",
+      required: true,
     },
     content: {
       type: String,
@@ -48,19 +51,6 @@ const CommentSchema = new mongoose.Schema(
       default: 0,
       max: 5,
     },
-    reports: [
-      {
-        userId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        reason: String,
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
     isDeleted: {
       type: Boolean,
       default: false,
@@ -71,8 +61,7 @@ const CommentSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for performance
-CommentSchema.index({ feed: 1, createdAt: -1 });
+CommentSchema.index({ reel: 1, createdAt: -1 });
 CommentSchema.index({ parentComment: 1 });
 
-module.exports = mongoose.model("Comment", CommentSchema);
+module.exports = mongoose.model("ReelComment", CommentSchema);
