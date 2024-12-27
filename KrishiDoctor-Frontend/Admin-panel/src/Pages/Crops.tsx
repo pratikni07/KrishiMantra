@@ -1,158 +1,241 @@
-import React, { useRef, useState, useEffect } from 'react';
+// pages/CropPage.tsx
+import React, { useState, useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getAllCrops } from "../service/operations/cropAPI.js";
+import { Crop } from "../types";
 import { Button } from "@/components/ui/button";
-import { Search, X, Plus } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-
+import { Input } from "@/components/ui/input";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, Plus, X, Loader2 } from "lucide-react";
+import addcrop
+import { cn } from "@/lib/utils";
 
-  
-interface CropsProps {
-  onAddCrops?: () => void;
-  onSearch?: (searchTerm: string) => void;
-}
-
-const Crops: React.FC<CropsProps> = ({
-  onAddCrops,
-  onSearch
-}) => {
-  const [searchTerm, setSearchTerm] = useState<string>('');
+const CropPage: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSeason, setSelectedSeason] = useState<string>("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  const { data: response, isLoading } = useQuery(["crops"], getAllCrops);
+  const crops = response?.data || [];
+
+  // Keyboard shortcut for search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl + K shortcut to focus on search
-      if (e.ctrlKey && e.key === 'k') {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         searchInputRef.current?.focus();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleSearchClick = () => {
+  // Get unique seasons from all crops
+  const uniqueSeasons = React.useMemo(() => {
+    const seasons = new Set<string>();
+    crops.forEach((crop: Crop) => {
+      crop.seasons.forEach((season) => seasons.add(season.type));
+    });
+    return Array.from(seasons);
+  }, [crops]);
+
+  // Filter crops based on search and season
+  const filteredCrops = React.useMemo(() => {
+    return crops.filter((crop: Crop) => {
+      const matchesSearch =
+        crop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        crop.scientificName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        crop.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesSeason =
+        !selectedSeason ||
+        crop.seasons.some((season) => season.type === selectedSeason);
+
+      return matchesSearch && matchesSeason;
+    });
+  }, [crops, searchTerm, selectedSeason]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedSeason("");
     searchInputRef.current?.focus();
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    onSearch?.(value);
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm('');
-    onSearch?.('');
-    searchInputRef.current?.focus();
-  };
-
-  const handleAddCrops = () => {
-    onAddCrops?.();
   };
 
   return (
-    <div className="">
-      <div className="bg-white  overflow-hidden border border-gray-200">
-        <div className="bg-gradient-to-r from-[#31A05F] to-[#2a8f54] text-white py-5 px-6 ">
-          <h1 className="text-3xl font-extrabold text-center tracking-tight">
-            Crops Management
-          </h1>
-        </div>
-        
-        <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center gap-4">
-  
-  <Dialog>
-  <DialogTrigger>
-  <Button
-    onClick={handleAddCrops}
-    className="w-auto flex items-center justify-center gap-2 
-      bg-[#31A05F] hover:bg-[#2a8f54] text-white 
-      transition-all duration-300 ease-in-out 
-      transform hover:scale-105 active:scale-95 
-      shadow-md hover:shadow-lg"
-  >
-    <Plus size={20} className="mr-2" />
-    Add Crops
-  </Button>
-
-
-  </DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Are you absolutely sure?</DialogTitle>
-      <DialogDescription>
-        This action cannot be undone. This will permanently delete your account
-        and remove your data from our servers.
-      </DialogDescription>
-    </DialogHeader>
-  </DialogContent>
-</Dialog>
-
-
-  
-  <div className="relative flex-grow max-w-[400px] w-full">
-    <div className="flex items-center">
-      <Input
-        ref={searchInputRef}
-        type="text"
-        placeholder="Search crops..."
-        value={searchTerm}
-        onChange={handleSearchChange}
-        className="w-full pl-10 pr-10 py-2 
-          border-2 border-gray-300 
-          focus:border-[#31A05F] 
-          focus:ring-2 focus:ring-[#31A05F]/30 
-          rounded-lg 
-          transition-all duration-300"
-      />
-      <div className="absolute left-3 top-1/4 -translate-y-1/2 text-gray-400">
-        <Search size={20} />
-      </div>
-      {searchTerm && (
-        <button
-          onClick={handleClearSearch}
-          className="absolute right-3 top-1/2 -translate-y-1/2 
-            text-gray-400 hover:text-gray-600 
-            transition-colors duration-200"
-        >
-          <X size={20} />
-        </button>
-      )}
-    </div>
-    <div>
-        <div className="text-center text-sm text-gray-500 flex justify-center items-center gap-2 mt-3">
-            <div className="flex items-center gap-1">
-              <kbd className="bg-gray-100 border border-gray-300 rounded px-2 py-1 text-xs font-sans font-medium">
-                Ctrl
-              </kbd>
-              <kbd className="bg-gray-100 border border-gray-300 rounded px-2 py-1 text-xs font-sans font-medium">
-                K
-              </kbd>
-            </div>
-            <span>Quick search shortcut</span>
+    <div className="container mx-auto px-4 py-8">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow-lg mb-8 p-6 text-white">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Crop Management</h1>
+            <p className="mt-2 text-green-100">
+              Manage and monitor your crop database
+            </p>
           </div>
-    </div>
-  </div>
-</div>
-
-     
-
-          
+          <Button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-white text-green-700 hover:bg-green-50"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Crop
+          </Button>
         </div>
       </div>
+
+      {/* Filters Section */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Search & Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Input
+                ref={searchInputRef}
+                placeholder="Search crops..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-10"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            <Select value={selectedSeason} onValueChange={setSelectedSeason}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by season" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Seasons</SelectItem>
+                {uniqueSeasons.map((season) => (
+                  <SelectItem key={season} value={season}>
+                    {season}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {(searchTerm || selectedSeason) && (
+              <Button
+                variant="outline"
+                onClick={clearFilters}
+                className="whitespace-nowrap"
+              >
+                Clear Filters
+              </Button>
+            )}
+          </div>
+
+          <div className="mt-2 text-sm text-gray-500 flex items-center gap-1">
+            <span>Press</span>
+            <kbd className="px-2 py-1 bg-gray-100 border rounded-md">⌘</kbd>
+            <span>+</span>
+            <kbd className="px-2 py-1 bg-gray-100 border rounded-md">K</kbd>
+            <span>to search</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Data Table */}
+      <Card>
+        <CardContent className="p-0">
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Scientific Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Growing Period</TableHead>
+                  <TableHead>Seasons</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center">
+                      <div className="flex items-center justify-center text-gray-500">
+                        <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                        Loading crops...
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredCrops.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="h-24 text-center text-gray-500"
+                    >
+                      No crops found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredCrops.map((crop: Crop) => (
+                    <TableRow key={crop._id} className="hover:bg-gray-50">
+                      <TableCell className="font-medium">{crop.name}</TableCell>
+                      <TableCell className="italic text-gray-600">
+                        {crop.scientificName}
+                      </TableCell>
+                      <TableCell className="max-w-md">
+                        {crop.description.length > 100
+                          ? `${crop.description.substring(0, 100)}...`
+                          : crop.description}
+                      </TableCell>
+                      <TableCell>{crop.growingPeriod} days</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          {crop.seasons.map((season) => (
+                            <span
+                              key={season.type}
+                              className={cn(
+                                "px-2 py-1 rounded-full text-xs font-medium",
+                                selectedSeason === season.type
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-gray-100 text-gray-700"
+                              )}
+                            >
+                              {season.type}
+                            </span>
+                          ))}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Add Crop Modal */}
+      <AddCropModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
     </div>
   );
 };
 
-export default Crops;
+export default CropPage;

@@ -1,42 +1,71 @@
-{"level":"info","message":"🚀 API Gateway running on port 3000","service":"api-gateway","timestamp":"2024-12-08 10:02:32"}
-{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-08 10:02:32"}
-{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-08 10:03:08"}
-{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-08 10:03:08"}
-{"level":"info","message":"[GET] /apple-touch-icon-precomposed.png - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 02:24:25"}
-{"level":"warn","message":"404 - Not Found: /apple-touch-icon-precomposed.png","service":"api-gateway","timestamp":"2024-12-25 02:24:25"}
-{"level":"info","message":"[GET] /apple-touch-icon.png - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 02:24:25"}
-{"level":"warn","message":"404 - Not Found: /apple-touch-icon.png","service":"api-gateway","timestamp":"2024-12-25 02:24:25"}
-{"level":"info","message":"[GET] / - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 02:24:31"}
-{"level":"warn","message":"404 - Not Found: /","service":"api-gateway","timestamp":"2024-12-25 02:24:31"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 02:24:39"}
-{"level":"info","message":"[POST] /api/main/companies - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 02:24:54"}
-{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-25 18:11:14"}
-{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-25 18:11:14"}
-{"level":"info","message":"[GET] /api/main/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 18:43:21"}
-{"level":"info","message":"[GET] /api/main/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 18:43:55"}
-{"level":"info","message":"[GET] /api/main/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 18:44:25"}
-{"level":"info","message":"[GET] /api/main/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 18:46:17"}
-{"level":"info","message":"[GET] /api/main/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 18:53:15"}
-{"level":"info","message":"[GET] /api/main/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 18:56:09"}
-{"level":"info","message":"[GET] /api/main/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 18:56:25"}
-{"level":"info","message":"[GET] /api/main/home-screen-ads - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 18:56:53"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 18:56:56"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 18:57:19"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 18:57:55"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 18:58:00"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 18:58:53"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 19:00:57"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 19:03:21"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 19:03:23"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 20:18:04"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 20:18:23"}
-{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 20:20:09"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 21:30:32"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 21:32:29"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 21:32:32"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::1","service":"api-gateway","timestamp":"2024-12-25 21:40:20"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 21:58:12"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 21:59:50"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 21:59:50"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 22:00:14"}
-{"level":"info","message":"[GET] /api/main/companies - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-25 22:06:12"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-26 18:50:11"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-26 18:50:11"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 18:53:45"}
+{"level":"info","message":"[GET] /api/main/companies - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 19:04:21"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 19:20:09"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 19:26:10"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 19:27:44"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 19:29:40"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 19:32:04"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 19:35:17"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 19:37:04"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 19:46:55"}
+{"level":"info","message":"[POST] /api/main/auth/sendotp - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 20:11:44"}
+{"level":"info","message":"[POST] /api/main/auth/sendotp - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 20:13:01"}
+{"level":"info","message":"[POST] /api/v1/auth/signup - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 20:14:55"}
+{"level":"warn","message":"404 - Not Found: /api/v1/auth/signup","service":"api-gateway","timestamp":"2024-12-26 20:14:55"}
+{"level":"info","message":"[POST] /api/main/auth/signup - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 20:15:03"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 20:15:41"}
+{"level":"info","message":"[GET] /api/main/companies - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 20:23:51"}
+{"level":"info","message":"[POST] /api/main/user/consultant - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 23:15:03"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-26 23:15:13"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-26 23:15:13"}
+{"level":"info","message":"[POST] /api/main/user/consultant - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 23:15:19"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:32:03"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:37:04"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:40:31"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:41:22"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:43:29"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::1","service":"api-gateway","timestamp":"2024-12-26 23:44:21"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:45:04"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:45:44"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:52:40"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:56:11"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-26 23:58:02"}
+{"level":"info","message":"[GET] /api/main/ads/home-screen-ads - IP: ::ffff:127.0.0.1","service":"api-gateway","timestamp":"2024-12-27 00:02:50"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:11:44"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:11:44"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:12:21"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:12:21"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:15:39"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:15:39"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:16:00"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:16:00"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:48:54"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:48:54"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:50:30"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:50:30"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:50:41"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:50:41"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:51:00"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:51:00"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 00:51:07"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 00:51:07"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 01:01:27"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:01:27"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 01:07:54"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:07:54"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 01:12:08"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:12:08"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 01:12:42"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:12:42"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 01:13:08"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:13:08"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 01:13:28"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:13:28"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 01:15:52"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:15:52"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 01:24:47"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:24:47"}
+{"level":"info","message":"[GET] /api/mandi/prices/Azadpur - IP: ::1","service":"api-gateway","timestamp":"2024-12-27 01:25:38"}
+{"level":"warn","message":"404 - Not Found: /api/mandi/prices/Azadpur","service":"api-gateway","timestamp":"2024-12-27 01:25:38"}

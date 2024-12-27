@@ -20,5 +20,19 @@ export const company = {
 
   ADD_COMPANY_API: BASE_URL + "/main/companies",
 };
+export const crop = {
+  GET_ALL_CROP_API: BASE_URL + "/main/crop-calendar/crops",
+  CREATE_CROP_API: BASE_URL + "/main/crop-calendar/crops/create",
+  UPDATE_CROP_API: BASE_URL + "/main/crop-calendar/crops/update",
+  DELETE_CROP_API: BASE_URL + "/main/crop-calendar/crops/delete",
+};
 
-// http://localhost:3001/api/main/companies
+export const activity = {
+  GET_ALL_ACTIVITIES_API: BASE_URL + "/main/crop-calendar/activities",
+  CREATE_ACTIVITY_API: BASE_URL + "/main/crop-calendar/activities/create",
+};
+
+export const calendar = {
+  GET_CALENDAR_API: BASE_URL + "/main/crop-calendar/calendar",
+  CREATE_CALENDAR_API: BASE_URL + "/main/crop-calendar/calendar/create",
+};

@@ -20,7 +20,6 @@ class ApiService {
       _url,
       headers: headers,
     );
-    print(response);
     return response;
   }
 

@@ -15,12 +15,13 @@ const { MemoryStore } = require("express-rate-limit");
 const statusMonitor = require("express-status-monitor");
 
 const userRoutes = require("./routes/User");
-const companyRoutes = require('./routes/companyRoutes');
-const productRoutes = require('./routes/productRoutes');
-const newsRoutes = require('./routes/newsRoutes');
-const adsRoutes = require("./routes/AdsRoutes")
-const serviceRoutes = require("./routes/ServiceRoutes")
-const userRoutesOne = require("./routes/UserRoutes")
+const companyRoutes = require("./routes/companyRoutes");
+const productRoutes = require("./routes/productRoutes");
+const newsRoutes = require("./routes/newsRoutes");
+const adsRoutes = require("./routes/AdsRoutes");
+const serviceRoutes = require("./routes/ServiceRoutes");
+const userRoutesOne = require("./routes/UserRoutes");
+const cropRoutes = require("./routes/cropCalendar");
 // Load environment variables
 dotenv.config();
 
@@ -28,7 +29,7 @@ dotenv.config();
 const envSchema = Joi.object({
   PORT: Joi.number().default(40043),
   MONGODB_URL: Joi.string().uri().required(),
-  CORS_ORIGIN: Joi.string().uri().default('*'),
+  CORS_ORIGIN: Joi.string().uri().default("*"),
   // CLOUDINARY_URL: Joi.string().uri().required()
 });
 
@@ -38,22 +39,27 @@ if (error) {
   process.exit(1); // Exit the process gracefully
 }
 
-
 const app = express();
 const PORT = process.env.PORT || 40043;
 
 // Initialize logger
 const logger = winston.createLogger({
-  level: 'info',
+  level: "info",
   transports: [
     new winston.transports.Console({
-      format: winston.format.combine(winston.format.colorize(), winston.format.simple())
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      ),
     }),
     new winston.transports.File({
-      filename: 'logs/app.log',
-      format: winston.format.combine(winston.format.timestamp(), winston.format.json())
-    })
-  ]
+      filename: "logs/app.log",
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+      ),
+    }),
+  ],
 });
 
 // Connect to database
@@ -69,10 +75,9 @@ app.use(cookieParser());
 // Rate limiting setup using Redis (Optional: You can configure your own Redis)
 const redisClient = Redis.createClient();
 
-
 app.use(
   statusMonitor({
-    path: '/status', // URL path for the dashboard
+    path: "/status", // URL path for the dashboard
     spans: [
       { interval: 1, retention: 60 }, // 1 second for 1 minute
       { interval: 5, retention: 60 }, // 5 seconds for 5 minutes
@@ -100,9 +105,7 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-
 // Custom configuration for express-status-monitor
-
 
 // Configure CORS for production
 app.use(
@@ -131,12 +134,13 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", userRoutes);
-app.use('/companies', companyRoutes);
-app.use('/products', productRoutes);
-app.use('/ads',adsRoutes)
-app.use('/news', newsRoutes);
-app.use('/service',serviceRoutes)
-app.use('/user',userRoutesOne)
+app.use("/companies", companyRoutes);
+app.use("/products", productRoutes);
+app.use("/ads", adsRoutes);
+app.use("/news", newsRoutes);
+app.use("/service", serviceRoutes);
+app.use("/user", userRoutesOne);
+app.use("/crop-calendar", cropRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -145,7 +149,7 @@ app.use((err, req, res, next) => {
 });
 
 // Graceful shutdown
-process.on('SIGINT', () => {
+process.on("SIGINT", () => {
   logger.info("Server is shutting down...");
   process.exit();
 });

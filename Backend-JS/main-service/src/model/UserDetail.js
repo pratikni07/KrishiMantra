@@ -1,78 +1,84 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-const UserDetailSchema = new mongoose.Schema({
+const UserDetailSchema = new mongoose.Schema(
+  {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
     },
     address: {
       type: String,
-      trim: true
+      trim: true,
     },
     location: {
       type: {
-        latitude: {
-          type: Number,
-          min: [-90, 'Latitude must be between -90 and 90'],
-          max: [90, 'Latitude must be between -90 and 90']
-        },
-        longitude: {
-          type: Number,
-          min: [-180, 'Longitude must be between -180 and 180'],
-          max: [180, 'Longitude must be between -180 and 180']
-        }
+        type: String, // Must be 'Point'
+        enum: ["Point"],
+        required: true,
       },
-      default: {}
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        required: true,
+      },
     },
     interests: [
       {
         type: String,
-        trim: true
-      }
+        trim: true,
+      },
     ],
     profilePic: {
       type: String,
-      trim: true
+      trim: true,
     },
     followers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-      }
+        ref: "User",
+      },
     ],
     followings: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-      }
+        ref: "User",
+      },
     ],
     blockedUsers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-      }
+        ref: "User",
+      },
     ],
     subscription: {
       type: {
-        type: {
-          type: String,
-          enum: ["FREE","PRIME","MEGA"],
-          default: "FREE"
-        },
-        transactionDetails: {
-          type: mongoose.Schema.Types.Mixed
-        },
-        endDate: Date,
-        purchasedDate: Date
+        type: String, // Directly define 'type' as a String
+        enum: ["FREE", "PRIME", "MEGA"],
+        default: "FREE",
       },
-      default: {}
+      transactionDetails: {
+        type: mongoose.Schema.Types.Mixed,
+      },
+      endDate: Date,
+      purchasedDate: Date,
     },
-    company:{
+    experience: {
+      type: Number,
+      default: 0,
+    },
+    company: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:"Company"
-    }
-  }, {
-    timestamps: true
-  });
+      ref: "Company",
+    },
+    rating: {
+      type: Number,
+      default: 3,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-  module.exports = mongoose.model("UserDetail", UserDetailSchema);
+UserDetailSchema.index({ location: "2dsphere" });
+
+module.exports = mongoose.model("UserDetail", UserDetailSchema);
