@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:krishi_mantra/screens/LanguageSelectionPage.dart';
+import 'package:krishi_mantra/screens/features/company/company_details_screen.dart';
 import 'package:krishi_mantra/screens/features/company/company_list_screen.dart';
+import 'package:krishi_mantra/screens/features/company/models/modal.dart';
 import 'package:krishi_mantra/screens/features/news/NewsPage.dart';
+import 'package:krishi_mantra/screens/features/weather/WeatherScreen.dart';
 import 'package:krishi_mantra/screens/loginScreen/Repository/login_repo.dart';
 import '../screens/loginScreen/bloc/login_bloc.dart';
 import '../screens/splash_screen.dart';
@@ -13,16 +16,20 @@ class Routes {
   static const String splash = '/';
   static const String home = '/home';
   static const String login = '/login';
+  static const String companydetail = '/company-details';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       case home:
-        return MaterialPageRoute(builder: (_) => CompanyListScreen());
-      // return MaterialPageRoute(builder: (_) => const FarmerHomePage());
-      // return MaterialPageRoute(builder: (_) => const LanguageSelectionScreen());
+        // return MaterialPageRoute(builder: (_) => CompanyListScreen());
+        return MaterialPageRoute(builder: (_) => const FarmerHomePage());
+      // return MaterialPageRoute(
+      //     builder: (_) => const LanguageSelectionScreen());
       // return MaterialPageRoute(builder: (_) => const NewsPage());
+      // return MaterialPageRoute(builder: (_) => WeatherScreen());
+
       case login:
         return MaterialPageRoute(
           builder: (_) => RepositoryProvider(

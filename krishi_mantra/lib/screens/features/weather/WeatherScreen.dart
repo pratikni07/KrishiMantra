@@ -13,11 +13,21 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
+  // Custom color scheme
+  static final customColors = {
+    'primary': const Color.fromARGB(255, 116, 206, 88), // Forest green
+    'secondary': const Color(0xFF31A05F), // Sage green
+    'accent': const Color(0xFFE09F3E), // Warm orange
+    'background': const Color(0xFFF5F3EF), // Light cream
+    'cardBg': Colors.white,
+    'textDark': const Color(0xFF2C3639), // Dark gray
+    'textLight': const Color(0xFF6B7280), // Medium gray
+  };
+
   String currentLocation = "Loading...";
   Position? currentPosition;
   bool isLoading = true;
-  
-  // Sample weather data (same as original)
+
   Map<String, dynamic> weatherData = {
     'temperature': 28,
     'feels_like': 30,
@@ -51,7 +61,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   Future<void> _getCurrentLocation() async {
-    // Location logic remains the same
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
@@ -85,16 +94,16 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: customColors['background'],
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.white,
-              Colors.grey[50]!,
-              Colors.grey[100]!,
+              customColors['cardBg']!,
+              customColors['background']!,
+              customColors['background']!,
             ],
           ),
         ),
@@ -102,7 +111,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           child: isLoading
               ? Center(
                   child: CircularProgressIndicator(
-                    color: Colors.blue[400],
+                    color: customColors['primary'],
                   ),
                 )
               : SingleChildScrollView(
@@ -139,7 +148,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   children: [
                     Icon(
                       Icons.location_on,
-                      color: Colors.blue[400],
+                      color: customColors['primary'],
                       size: 24,
                     ),
                     const SizedBox(width: 8),
@@ -147,7 +156,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       child: Text(
                         currentLocation,
                         style: TextStyle(
-                          color: Colors.grey[800],
+                          color: customColors['textDark'],
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -160,7 +169,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 Text(
                   DateFormat('EEEE, d MMMM').format(DateTime.now()),
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: customColors['textLight'],
                     fontSize: 14,
                   ),
                 ),
@@ -169,7 +178,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.blue[400],
+              color: customColors['primary'],
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -191,11 +200,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
       margin: const EdgeInsets.symmetric(vertical: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: customColors['cardBg'],
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey[200]!,
+            color: customColors['textLight']!.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -212,7 +221,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   Text(
                     '${weatherData['temperature']}°C',
                     style: TextStyle(
-                      color: Colors.grey[800],
+                      color: customColors['textDark'],
                       fontSize: 64,
                       fontWeight: FontWeight.bold,
                     ),
@@ -220,7 +229,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   Text(
                     weatherData['condition'],
                     style: TextStyle(
-                      color: Colors.grey[600],
+                      color: customColors['textLight'],
                       fontSize: 20,
                     ),
                   ),
@@ -229,7 +238,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               BoxedIcon(
                 WeatherIcons.day_cloudy,
                 size: 80,
-                color: Colors.blue[400],
+                color: customColors['accent'],
               ),
             ],
           ),
@@ -262,12 +271,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Widget _buildWeatherInfo(IconData icon, String value, String label) {
     return Column(
       children: [
-        BoxedIcon(icon, size: 20, color: Colors.blue[400]),
+        BoxedIcon(icon, size: 20, color: customColors['primary']),
         const SizedBox(height: 8),
         Text(
           value,
           style: TextStyle(
-            color: Colors.grey[800],
+            color: customColors['textDark'],
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -275,7 +284,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         Text(
           label,
           style: TextStyle(
-            color: Colors.grey[600],
+            color: customColors['textLight'],
             fontSize: 12,
           ),
         ),
@@ -288,15 +297,15 @@ class _WeatherScreenState extends State<WeatherScreen> {
       margin: const EdgeInsets.symmetric(vertical: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: customColors['cardBg'],
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.blue[100]!,
+          color: customColors['primary']!.withOpacity(0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey[200]!,
+            color: customColors['textLight']!.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -309,14 +318,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
             children: [
               Icon(
                 Icons.agriculture,
-                color: Colors.blue[400],
+                color: customColors['primary'],
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 "Today's Farming Tips",
                 style: TextStyle(
-                  color: Colors.grey[800],
+                  color: customColors['textDark'],
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -346,10 +355,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.blue[50],
+            color: customColors['primary']!.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: Colors.blue[400], size: 20),
+          child: Icon(icon, color: customColors['primary'], size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -359,7 +368,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               Text(
                 title,
                 style: TextStyle(
-                  color: Colors.grey[800],
+                  color: customColors['textDark'],
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -367,7 +376,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               Text(
                 description,
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: customColors['textLight'],
                   fontSize: 14,
                 ),
               ),
@@ -383,11 +392,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
       margin: const EdgeInsets.symmetric(vertical: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: customColors['cardBg'],
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey[200]!,
+            color: customColors['textLight']!.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -399,7 +408,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           Text(
             'Today\'s Details',
             style: TextStyle(
-              color: Colors.grey[800],
+              color: customColors['textDark'],
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -423,14 +432,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
           Text(
             label,
             style: TextStyle(
-              color: Colors.grey[600],
+              color: customColors['textLight'],
               fontSize: 14,
             ),
           ),
           Text(
             value,
             style: TextStyle(
-              color: Colors.grey[800],
+              color: customColors['textDark'],
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
@@ -454,11 +463,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
             margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: customColors['cardBg'],
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey[200]!,
+                  color: customColors['textLight']!.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -469,19 +478,20 @@ class _WeatherScreenState extends State<WeatherScreen> {
               children: [
                 Text(
                   DateFormat('HH:mm').format(forecast['time']),
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style:
+                      TextStyle(color: customColors['textLight'], fontSize: 12),
                 ),
                 BoxedIcon(
                   forecast['condition'] == 'Sunny'
                       ? WeatherIcons.day_sunny
                       : WeatherIcons.day_cloudy,
                   size: 25,
-                  color: Colors.blue[400],
+                  color: customColors['accent'],
                 ),
                 Text(
                   '${forecast['temperature']}°C',
                   style: TextStyle(
-                    color: Colors.grey[800],
+                    color: customColors['textDark'],
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -499,11 +509,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
       margin: const EdgeInsets.symmetric(vertical: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: customColors['cardBg'],
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey[200]!,
+            color: customColors['textLight']!.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -515,13 +525,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
           Text(
             '7-Day Forecast',
             style: TextStyle(
-              color: Colors.grey[800],
+              color: customColors['textDark'],
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
-          ...weeklyForecast.map((forecast) => _buildDailyForecastItem(forecast)),
+          ...weeklyForecast
+              .map((forecast) => _buildDailyForecastItem(forecast)),
         ],
       ),
     );
@@ -537,7 +548,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             width: 100,
             child: Text(
               DateFormat('EEEE').format(forecast['date']),
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              style: TextStyle(color: customColors['textLight'], fontSize: 14),
             ),
           ),
           BoxedIcon(
@@ -545,11 +556,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 ? WeatherIcons.day_sunny
                 : WeatherIcons.day_cloudy,
             size: 20,
-            color: Colors.blue[400],
+            color: customColors['accent'],
           ),
           Text(
             '${forecast['min_temp']}°C - ${forecast['max_temp']}°C',
-            style: TextStyle(color: Colors.grey[800], fontSize: 14),
+            style: TextStyle(color: customColors['textDark'], fontSize: 14),
           ),
         ],
       ),
@@ -562,11 +573,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
       margin: const EdgeInsets.symmetric(vertical: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: customColors['cardBg'],
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey[200]!,
+            color: customColors['textLight']!.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -578,7 +589,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           Text(
             'Temperature Variation',
             style: TextStyle(
-              color: Colors.grey[800],
+              color: customColors['textDark'],
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -593,7 +604,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   horizontalInterval: 5,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: Colors.grey[300]!,
+                      color: customColors['textLight']!.withOpacity(0.1),
                       strokeWidth: 1,
                     );
                   },
@@ -610,7 +621,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           return Text(
                             '$hour:00',
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              color: customColors['textLight'],
                               fontSize: 12,
                             ),
                           );
@@ -628,7 +639,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                         return Text(
                           '${value.toInt()}°',
                           style: TextStyle(
-                            color: Colors.grey[600],
+                            color: customColors['textLight'],
                             fontSize: 12,
                           ),
                         );
@@ -654,21 +665,21 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             ))
                         .toList(),
                     isCurved: true,
-                    color: Colors.blue[400],
+                    color: customColors['primary'],
                     barWidth: 2,
                     dotData: FlDotData(
                       show: true,
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: 3,
-                          color: Colors.blue[400]!,
+                          color: customColors['primary']!,
                           strokeWidth: 0,
                         );
                       },
                     ),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: Colors.blue[50],
+                      color: customColors['primary']!.withOpacity(0.1),
                     ),
                   ),
                 ],

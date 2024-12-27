@@ -1,53 +1,57 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema(
+  {
     name: {
       type: String,
-      required: [true, 'Name is required'],
-      trim: true
+      required: [true, "Name is required"],
+      trim: true,
     },
     firstName: {
       type: String,
-      trim: true
+      trim: true,
     },
     lastName: {
       type: String,
-      trim: true
+      trim: true,
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: [true, "Email is required"],
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        "Please fill a valid email address",
+      ],
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
-      minlength: [8, 'Password must be at least 8 characters long']
+      required: [true, "Password is required"],
+      minlength: [8, "Password must be at least 8 characters long"],
     },
     phoneNo: {
-      type:Number
+      type: Number,
     },
     additionalDetails: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'UserDetail'
+      ref: "UserDetail",
     },
     accountType: {
       type: String,
-      enum: ["user","consultant","admin"],
-      default: "user"
+      enum: ["user", "consultant", "admin"],
+      default: "user",
     },
     token: {
       type: String,
     },
     image: {
-      type: String
+      type: String,
     },
     createdAt: {
       type: Date,
-      default: Date.now
+      default: Date.now,
     },
     // interest:[
     //   {
@@ -55,8 +59,10 @@ const UserSchema = new mongoose.Schema({
     //     ref:'Tags'
     //   }
     // ]
-  }, {
-    timestamps: true
-  });
+  },
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model("User", UserSchema);

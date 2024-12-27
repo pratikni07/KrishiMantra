@@ -1,6 +1,7 @@
 // screens/company_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:krishi_mantra/API/CompanyScreenAPI.dart';
+import 'package:krishi_mantra/screens/features/company/company_details_screen.dart';
 import 'package:krishi_mantra/screens/features/company/models/api_response.dart';
 import 'dart:convert';
 
@@ -102,7 +103,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.8,
                         crossAxisSpacing: 10,
@@ -114,10 +116,13 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                         return CompanyCard(
                           company: company,
                           onTap: () {
-                            Navigator.pushNamed(
+                            Navigator.push(
                               context,
-                              '/company-details',
-                              arguments: company,
+                              MaterialPageRoute(
+                                builder: (context) => CompanyDetailScreen(
+                                  companyId: company.id,
+                                ),
+                              ),
                             );
                           },
                         );

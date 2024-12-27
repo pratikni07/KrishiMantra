@@ -1,10 +1,18 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:krishi_mantra/API/HomeScreenAPI.dart';
 import 'package:krishi_mantra/screens/components/PostCard.dart';
 import 'package:krishi_mantra/screens/components/TestimonialSection.dart';
 import 'package:krishi_mantra/screens/components/NewsCard.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:krishi_mantra/screens/features/crop_care/ChatList.dart';
+import 'package:krishi_mantra/screens/features/crop_care/ChatScreen.dart';
+import 'package:krishi_mantra/screens/features/feeds/FeedScreen.dart';
+import 'package:krishi_mantra/screens/features/mandi/MarketPriceScreen.dart';
+import 'package:krishi_mantra/screens/features/profile/FarmerProfilePage.dart';
+import 'package:krishi_mantra/screens/homeScreen/widget/PromoModal.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,15 +63,82 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
   int _currentIndex = 0;
   bool _isLocationSaved = false;
   String _savedLocation = '';
+  String _cityName = 'Unknown Location';
+  Position? _currentPosition;
   List<Map<String, dynamic>> priority1Ads = [];
   List<Map<String, dynamic>> priority2Ads = [];
   bool isLoading = true;
+  bool _isInitialLocationCheck = true;
+
+  Timer? _modalTimer;
+  static const String LAST_MODAL_TIME_KEY = 'last_modal_time';
+
+  final List<Map<String, String>> promoData = [
+    {
+      'imageUrl':
+          'https://img.pikbest.com/origin/06/30/22/05ppIkbEsTaxg.jpg!w700wp',
+      'targetUrl': 'https://example.com/promo1'
+    }
+  ];
 
   @override
   void initState() {
     super.initState();
     fetchAds();
     _checkLocationStatus();
+    _initializeModalTimer();
+  }
+
+  @override
+  void dispose() {
+    _modalTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _initializeModalTimer() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastShownTime = prefs.getInt(LAST_MODAL_TIME_KEY) ?? 0;
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
+
+    // Check if 2 hours have passed since last shown
+    if (currentTime - lastShownTime >=
+        const Duration(hours: 2).inMilliseconds) {
+      // Show modal immediately if 2 hours have passed
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showPromoModal();
+      });
+    }
+
+    // Set up periodic timer for every 2 hours
+    _modalTimer = Timer.periodic(const Duration(hours: 2), (timer) {
+      _showPromoModal();
+    });
+  }
+
+  Future<void> _showPromoModal() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(
+        LAST_MODAL_TIME_KEY, DateTime.now().millisecondsSinceEpoch);
+
+    if (!mounted) return;
+
+    // Show the modal with the first promo item
+    // You can implement logic to rotate through different promos
+    final promo = promoData.first;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return PromoModal(
+          imageUrl: promo['imageUrl']!,
+          targetUrl: promo['targetUrl']!,
+          onClose: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
   }
 
   Future<void> fetchAds() async {
@@ -84,8 +159,8 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
               .map((ad) => Map<String, dynamic>.from(ad))
               .toList();
 
-          print('Priority 1 Ads: $priority1Ads');
-          print('Priority 2 Ads: $priority2Ads');
+          // print('Priority 1 Ads: $priority1Ads');
+          // print('Priority 2 Ads: $priority2Ads');
 
           isLoading = false;
         });
@@ -105,44 +180,125 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
 
   Future<void> _checkLocationStatus() async {
     final prefs = await SharedPreferences.getInstance();
+    final hasLocation = prefs.containsKey('user_location');
+
     setState(() {
-      _isLocationSaved = prefs.containsKey('user_location');
+      _isLocationSaved = hasLocation;
       _savedLocation = prefs.getString('user_location') ?? '';
+      _cityName = prefs.getString('city_name') ?? 'Unknown Location';
     });
 
-    if (!_isLocationSaved) {
+    if (_isInitialLocationCheck && !hasLocation) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showLocationAccessModal();
+      });
+      _isInitialLocationCheck = false;
+    } else if (hasLocation && _cityName == 'Unknown Location') {
+      _getCurrentLocation();
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      final hasPermission = await _handleLocationPermission();
+      if (!hasPermission) {
+        _showLocationAccessModal();
+        return;
+      }
+
+      setState(() {
+        isLoading = true;
+      });
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      setState(() {
+        _currentPosition = position;
+      });
+
+      await _getAddressFromLatLng(position);
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      setState(() {
+        isLoading = false;
       });
     }
   }
 
-  Future<void> _requestLocation() async {
-    var status = await Permission.location.request();
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-    if (status.isGranted) {
-      try {
-        Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-        );
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+            Text('Location services are disabled. Please enable the services'),
+      ));
+      return false;
+    }
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(
-            'user_location', '${position.latitude},${position.longitude}');
-
-        setState(() {
-          _isLocationSaved = true;
-          _savedLocation = '${position.latitude},${position.longitude}';
-        });
-
-        Navigator.of(context).pop();
-      } catch (e) {
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to retrieve location: $e')),
+          const SnackBar(content: Text('Location permissions are denied')),
         );
+        return false;
       }
-    } else {
-      _showPermissionDeniedDialog();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Location permissions are permanently denied'),
+      ));
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<void> _getAddressFromLatLng(Position position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      Placemark place = placemarks[0];
+      setState(() {
+        _cityName =
+            place.locality ?? place.subAdministrativeArea ?? 'Unknown Location';
+        _savedLocation = '${position.latitude},${position.longitude}';
+        _isLocationSaved = true;
+      });
+
+      // Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_location', _savedLocation);
+      await prefs.setString('city_name', _cityName);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> _requestLocation() async {
+    try {
+      final hasPermission = await _handleLocationPermission();
+      if (!hasPermission) {
+        _showLocationAccessModal();
+        return;
+      }
+
+      await _getCurrentLocation();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to retrieve location: $e')),
+      );
     }
   }
 
@@ -176,89 +332,104 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
+      enableDrag: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
       builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          height: MediaQuery.of(context).size.height * 0.5,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                spreadRadius: 5,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(Icons.location_on, size: 100, color: Colors.green[700]),
-              const SizedBox(height: 20),
-              Text(
-                'Enable Location Access',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[900],
+        return WillPopScope(
+          onWillPop: () async =>
+              false, // Prevent back button from closing modal
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            height: MediaQuery.of(context).size.height * 0.5,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  spreadRadius: 5,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 15),
-              Text(
-                'We need your location to provide personalized agricultural insights, weather updates, and local crop recommendations.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[100],
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    child: Text(
-                      'Not Now',
-                      style: TextStyle(
-                        color: Colors.red[800],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.location_on, size: 100, color: Colors.green[700]),
+                const SizedBox(height: 20),
+                Text(
+                  'Enable Location Access',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[900],
                   ),
-                  const SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: _requestLocation,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  'We need your location to provide personalized agricultural insights, weather updates, and local crop recommendations.',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Set a default location or handle "Not Now" case
+                        setState(() {
+                          _cityName = 'Location Not Set';
+                          _isLocationSaved = false;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[100],
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: Text(
+                        'Not Now',
+                        style: TextStyle(
+                          color: Colors.red[800],
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    child: const Text(
-                      'Allow Access',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await _requestLocation();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text(
+                        'Allow Access',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -335,11 +506,16 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
   }
 
   final List<Widget> _pages = [
-    const Center(child: Text('Home Page')),
-    const Center(child: Text('Feed Page')),
-    const Center(child: Text('Crop Care Page')),
-    const Center(child: Text('Mandi Page')),
-    const Center(child: Text('Profile Page')),
+    // const Center(child: Text('Home Page')),
+    HomeContent(),
+    const KrishiMantraFeed(),
+    ConsultantListScreen(),
+    // const ChatScreen(
+    //     userName: "Pratik",
+    //     userProfilePic:
+    //         "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg"),
+    const MarketPriceScreen(),
+    const FarmerProfile()
   ];
 
   void _onTabTapped(int index) {
