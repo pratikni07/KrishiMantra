@@ -248,3 +248,10 @@
 {"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-27T03:01:09.325Z"}
 {"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-27T03:05:03.057Z"}
 {"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-27T03:15:33.434Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-27T15:50:06.024Z"}
+{"level":"error","message":"BadRequestError: request aborted\n    at IncomingMessage.onAborted (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/raw-body/index.js:245:10)\n    at IncomingMessage.emit (node:events:513:28)\n    at IncomingMessage._destroy (node:_http_incoming:221:10)\n    at _destroy (node:internal/streams/destroy:122:10)\n    at IncomingMessage.destroy (node:internal/streams/destroy:84:5)\n    at abortIncoming (node:_http_server:809:9)\n    at socketOnClose (node:_http_server:803:3)\n    at Socket.emit (node:events:525:35)\n    at TCP.<anonymous> (node:net:351:12)","timestamp":"2024-12-27T15:50:37.086Z"}
+{"level":"error","message":"BadRequestError: request aborted\n    at IncomingMessage.onAborted (/Users/pratik/Desktop/PRAT/FarmDoctor/Backend-JS/main-service/node_modules/raw-body/index.js:245:10)\n    at IncomingMessage.emit (node:events:513:28)\n    at IncomingMessage._destroy (node:_http_incoming:221:10)\n    at _destroy (node:internal/streams/destroy:122:10)\n    at IncomingMessage.destroy (node:internal/streams/destroy:84:5)\n    at abortIncoming (node:_http_server:809:9)\n    at socketOnClose (node:_http_server:803:3)\n    at Socket.emit (node:events:525:35)\n    at TCP.<anonymous> (node:net:351:12)","timestamp":"2024-12-27T15:51:14.449Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-27T15:51:31.153Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-27T15:51:33.339Z"}
+{"level":"info","message":"Server is running on port 3002","timestamp":"2024-12-27T20:10:51.793Z"}
+{"level":"info","message":"Server is shutting down...","timestamp":"2024-12-27T20:11:32.942Z"}

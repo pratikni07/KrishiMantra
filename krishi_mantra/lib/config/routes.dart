@@ -3,6 +3,8 @@ import 'package:krishi_mantra/screens/LanguageSelectionPage.dart';
 import 'package:krishi_mantra/screens/features/company/company_details_screen.dart';
 import 'package:krishi_mantra/screens/features/company/company_list_screen.dart';
 import 'package:krishi_mantra/screens/features/company/models/modal.dart';
+import 'package:krishi_mantra/screens/features/crop-calendar/CropCalendarPage.dart';
+import 'package:krishi_mantra/screens/features/crop-calendar/ShowAllCrops.dart';
 import 'package:krishi_mantra/screens/features/news/NewsPage.dart';
 import 'package:krishi_mantra/screens/features/weather/WeatherScreen.dart';
 import 'package:krishi_mantra/screens/loginScreen/Repository/login_repo.dart';
@@ -23,6 +25,8 @@ class Routes {
       case splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       case home:
+        // return MaterialPageRoute(builder: (_) => CropListingPage());
+        // return MaterialPageRoute(builder: (_) => CropCalendarScreen());
         // return MaterialPageRoute(builder: (_) => CompanyListScreen());
         return MaterialPageRoute(builder: (_) => const FarmerHomePage());
       // return MaterialPageRoute(
