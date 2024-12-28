@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-
-enum MediaType {
-  image,
-  video,
-  none
-}
+enum MediaType { image, video, none }
 
 class FacebookPostCard extends StatefulWidget {
   final String username;
@@ -30,6 +25,7 @@ class FacebookPostCard extends StatefulWidget {
     this.likes = 0,
     this.comments = 0,
     this.shares = 0,
+    Future<void> Function(dynamic isLiked)? onLiked,
   }) : super(key: key);
 
   @override
@@ -115,16 +111,38 @@ class _FacebookPostCardState extends State<FacebookPostCard> {
   }
 
   Widget _buildImageMedia() {
-    return Image.network(
-      widget.mediaUrl!,
-      width: double.infinity,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => _buildMediaErrorWidget(),
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return _buildMediaLoadingWidget(loadingProgress);
-      },
-    );
+    return widget.mediaUrl == null
+        ? const SizedBox.shrink()
+        : Container(
+            width: double.infinity,
+            height: 300, // Set a default height, you can adjust as needed
+            color: _isVerticalImage(widget.mediaUrl!)
+                ? Colors.grey[300] // Background for vertical images
+                : Colors.transparent, // No background for horizontal images
+            child: Image.network(
+              widget.mediaUrl!,
+              fit: _isVerticalImage(widget.mediaUrl!)
+                  ? BoxFit.contain // Ensure the full vertical image is visible
+                  : BoxFit.cover, // Keep horizontal images as they are
+              errorBuilder: (context, error, stackTrace) =>
+                  _buildMediaErrorWidget(),
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return _buildMediaLoadingWidget(loadingProgress);
+              },
+            ),
+          );
+  }
+
+// Helper method to check if the image is vertical
+  bool _isVerticalImage(String imageUrl) {
+    // You can use a package like 'image' to get the image dimensions or hard-code it
+    // For simplicity, let's assume vertical images have a higher height than width
+    final image = NetworkImage(imageUrl);
+    // For demo purposes, we’ll just check an aspect ratio based on your server or assumptions.
+    // Ideally, you should load the image and check its real aspect ratio.
+
+    return true; // Placeholder, add your logic here to check if the image is vertical.
   }
 
   Widget _buildVideoMedia() {
@@ -156,7 +174,9 @@ class _FacebookPostCardState extends State<FacebookPostCard> {
                 });
               },
               child: Icon(
-                _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                _videoController!.value.isPlaying
+                    ? Icons.pause
+                    : Icons.play_arrow,
               ),
             ),
           ),
@@ -189,7 +209,8 @@ class _FacebookPostCardState extends State<FacebookPostCard> {
         child: progress != null
             ? CircularProgressIndicator(
                 value: progress.expectedTotalBytes != null
-                    ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                    ? progress.cumulativeBytesLoaded /
+                        progress.expectedTotalBytes!
                     : null,
               )
             : const CircularProgressIndicator(),
@@ -207,13 +228,13 @@ class _FacebookPostCardState extends State<FacebookPostCard> {
         children: [
           // Header Section (User Profile)
           _buildHeader(),
-          
+
           // Post Content
           _buildPostContent(),
-          
+
           // Media Content
           _buildMediaContent(),
-          
+
           // Interactions Section
           _buildInteractionsSection(),
         ],
@@ -266,11 +287,45 @@ class _FacebookPostCardState extends State<FacebookPostCard> {
   Widget _buildPostContent() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Text(
-        widget.postContent,
-        style: const TextStyle(fontSize: 15),
+      child: RichText(
+        text: TextSpan(
+          children: _highlightTags(widget.postContent),
+          style: const TextStyle(color: Colors.black, fontSize: 15),
+        ),
       ),
     );
+  }
+
+  List<TextSpan> _highlightTags(String content) {
+    final hashtagRegExp = RegExp(r'\B#\w\w+'); // Matches words starting with #
+    final spans = <TextSpan>[];
+
+    int lastIndex = 0;
+    final matches = hashtagRegExp.allMatches(content);
+
+    for (final match in matches) {
+      if (match.start > lastIndex) {
+        // Add text before the hashtag
+        spans.add(TextSpan(text: content.substring(lastIndex, match.start)));
+      }
+
+      // Add the hashtag
+      spans.add(
+        TextSpan(
+          text: match.group(0),
+          style: const TextStyle(color: Colors.blue),
+        ),
+      );
+
+      lastIndex = match.end;
+    }
+
+    // Add remaining text after the last hashtag
+    if (lastIndex < content.length) {
+      spans.add(TextSpan(text: content.substring(lastIndex)));
+    }
+
+    return spans;
   }
 
   Widget _buildInteractionsSection() {
@@ -283,11 +338,12 @@ class _FacebookPostCardState extends State<FacebookPostCard> {
             children: [
               const Icon(Icons.thumb_up, color: Colors.blue, size: 18),
               const SizedBox(width: 4),
-              Text('$_currentLikes', style: const TextStyle(color: Colors.grey)),
+              Text('$_currentLikes',
+                  style: const TextStyle(color: Colors.grey)),
             ],
           ),
         ),
-        
+
         // Action Buttons
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

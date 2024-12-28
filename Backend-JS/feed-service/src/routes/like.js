@@ -1,31 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const LikeController = require('../controller/likeController');
-// const { 
-//   authenticateUser, 
-//   validateLikeCreation 
-// } = require('../middleware');
+const LikeController = require("../controller/likeController");
 
 // Toggle Like (Create/Remove)
-router.post(
-  '/toggle', 
-  // authenticateUser,
-  // validateLikeCreation,
-  LikeController.toggleLike
-);
+router.post("/toggle", LikeController.toggleLike);
 
 // Get Likes for a Specific Feed
-router.get(
-  '/feed/:feedId', 
-  // authenticateUser,
-  LikeController.getFeedLikes
-);
+router.get("/feed/:feedId", LikeController.getFeedLikes);
 
 // Get User's Liked Feeds
-router.get(
-  '/user/:userId', 
-  // authenticateUser,
-  LikeController.getUserLikedFeeds
-);
+router.get("/user/:userId", LikeController.getUserLikedFeeds);
 
 module.exports = router;

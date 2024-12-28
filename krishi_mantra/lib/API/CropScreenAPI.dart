@@ -1,15 +1,17 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = 'http://localhost:3002';
+  final String baseUrl = 'http://localhost:3002/crop-calendar';
   final String _token = 'your_token';
   // API endpoint
-  final String _GET_ALL_COMPANY = '/companies';
-  final String _GET_COMPANY_BY_ID = '/companies';
+  final String _GET_ALL_CROPS = '/crops';
+  final String _GET_CALENDAR_BY_CROP_ID = '/calendar';
 
   // GET request
-  Future<http.Response> getAllCompany() async {
-    final Uri _url = Uri.parse('$baseUrl$_GET_ALL_COMPANY');
+  Future<http.Response> getAllCrops() async {
+    final Uri _url = Uri.parse('$baseUrl$_GET_ALL_CROPS');
 
     final headers = {
       'Authorization': 'Bearer $_token',
@@ -21,11 +23,13 @@ class ApiService {
       _url,
       headers: headers,
     );
+    // print(response);
     return response;
   }
 
-  Future<http.Response> getCompanyById(id) async {
-    final Uri _url = Uri.parse('$baseUrl$_GET_COMPANY_BY_ID/$id');
+  // GET CROP CALENDAR
+  Future<http.Response> getCropCalendar(id) async {
+    final Uri _url = Uri.parse('$baseUrl$_GET_CALENDAR_BY_CROP_ID/$id/6');
 
     final headers = {
       'Authorization': 'Bearer $_token',
@@ -37,6 +41,7 @@ class ApiService {
       _url,
       headers: headers,
     );
+    print(response);
     return response;
   }
 }

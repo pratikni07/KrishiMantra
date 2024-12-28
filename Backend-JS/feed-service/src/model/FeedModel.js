@@ -23,23 +23,11 @@ const FeedSchema = new mongoose.Schema({
     count: {
       type: Number,
     },
-    // likes: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Likes",
-    //   },
-    // ],
   },
   comment: {
     count: {
       type: Number,
     },
-    // comments: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Comments",
-    //   },
-    // ],
   },
   location: {
     latitude: {

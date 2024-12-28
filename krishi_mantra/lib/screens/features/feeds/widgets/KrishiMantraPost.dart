@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-enum MediaType {
-  image,
-  video,
-  none
-}
+enum MediaType { image, video, none }
 
 class KrishiMantraPost extends StatefulWidget {
   final String farmerName;
@@ -86,13 +82,13 @@ class _KrishiMantraPostState extends State<KrishiMantraPost> {
       text: widget.postContent,
       style: const TextStyle(fontSize: 15),
     );
-    
+
     _textPainter = TextPainter(
       text: text,
       maxLines: _maxLines,
       textDirection: TextDirection.ltr,
     )..layout(maxWidth: MediaQuery.of(context).size.width - 32);
-    
+
     _hasOverflow = _textPainter.didExceedMaxLines;
     if (mounted) setState(() {});
   }
@@ -168,11 +164,13 @@ class _KrishiMantraPostState extends State<KrishiMantraPost> {
           child: Column(
             children: [
               Expanded(
-                child: _buildCollageItem(widget.mediaUrls[1], topRightRadius: true),
+                child: _buildCollageItem(widget.mediaUrls[1],
+                    topRightRadius: true),
               ),
               const SizedBox(height: 2),
               Expanded(
-                child: _buildCollageItem(widget.mediaUrls[2], bottomRightRadius: true),
+                child: _buildCollageItem(widget.mediaUrls[2],
+                    bottomRightRadius: true),
               ),
             ],
           ),
@@ -190,7 +188,8 @@ class _KrishiMantraPostState extends State<KrishiMantraPost> {
             children: [
               Expanded(
                 flex: 3,
-                child: _buildCollageItem(widget.mediaUrls[0], topLeftRadius: true),
+                child:
+                    _buildCollageItem(widget.mediaUrls[0], topLeftRadius: true),
               ),
               const SizedBox(height: 2),
               Expanded(
@@ -198,7 +197,8 @@ class _KrishiMantraPostState extends State<KrishiMantraPost> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _buildCollageItem(widget.mediaUrls[1], bottomLeftRadius: true),
+                      child: _buildCollageItem(widget.mediaUrls[1],
+                          bottomLeftRadius: true),
                     ),
                     const SizedBox(width: 2),
                     Expanded(
@@ -215,7 +215,7 @@ class _KrishiMantraPostState extends State<KrishiMantraPost> {
           child: Stack(
             children: [
               _buildCollageItem(
-                widget.mediaUrls[3], 
+                widget.mediaUrls[3],
                 rightRadius: true,
                 height: double.infinity,
               ),
@@ -303,40 +303,41 @@ class _KrishiMantraPostState extends State<KrishiMantraPost> {
   }
 
   Widget _buildPostContent() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          text: TextSpan(
-            children: parseTextWithHashtags(widget.postContent),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              children: parseTextWithHashtags(widget.postContent),
+            ),
+            maxLines: _isExpanded ? null : _maxLines,
+            overflow:
+                _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
           ),
-          maxLines: _isExpanded ? null : _maxLines,
-          overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-        ),
-        if (_hasOverflow)
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _isExpanded = !_isExpanded;
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                _isExpanded ? 'See less' : 'See more...',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+          if (_hasOverflow)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  _isExpanded ? 'See less' : 'See more...',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
-          ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   Widget _buildHeader() {
     return Padding(
@@ -410,7 +411,8 @@ class _KrishiMantraPostState extends State<KrishiMantraPost> {
             children: [
               const Icon(Icons.thumb_up, color: Colors.green, size: 18),
               const SizedBox(width: 4),
-              Text('$_currentLikes', style: const TextStyle(color: Colors.grey)),
+              Text('$_currentLikes',
+                  style: const TextStyle(color: Colors.grey)),
               const Spacer(),
               Text('${widget.comments} comments • ${widget.shares} shares',
                   style: const TextStyle(color: Colors.grey)),
@@ -547,7 +549,6 @@ List<TextSpan> parseTextWithHashtags(String text) {
   return textSpans;
 }
 
-
 class PostDetailScreen extends StatelessWidget {
   final KrishiMantraPost post;
 
@@ -583,8 +584,8 @@ class PostDetailScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.error_outline, color: Colors.red),
-                          Text('Image failed to load', 
-                               style: TextStyle(color: Colors.red)),
+                          Text('Image failed to load',
+                              style: TextStyle(color: Colors.red)),
                         ],
                       ),
                     ),

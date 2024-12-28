@@ -508,7 +508,7 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
   final List<Widget> _pages = [
     // const Center(child: Text('Home Page')),
     HomeContent(),
-    const KrishiMantraFeed(),
+    const FeedPage(),
     ConsultantListScreen(),
     // const ChatScreen(
     //     userName: "Pratik",

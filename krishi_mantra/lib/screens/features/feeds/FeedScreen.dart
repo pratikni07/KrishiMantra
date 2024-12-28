@@ -1,148 +1,191 @@
-import 'package:flutter/material.dart';
-import 'package:krishi_mantra/screens/features/feeds/widgets/KrishiMantraPost.dart';
+import 'dart:convert';
 
-class KrishiMantraFeed extends StatefulWidget {
-  const KrishiMantraFeed({Key? key}) : super(key: key);
+import 'package:flutter/material.dart';
+import 'package:krishi_mantra/API/FeedScreenAPI.dart';
+import 'package:krishi_mantra/screens/components/PostCard.dart';
+import 'package:krishi_mantra/screens/features/feeds/model/feed_post.dart';
+
+class FeedPage extends StatefulWidget {
+  const FeedPage({Key? key}) : super(key: key);
 
   @override
-  _KrishiMantraFeedState createState() => _KrishiMantraFeedState();
+  _FeedPageState createState() => _FeedPageState();
 }
 
-class _KrishiMantraFeedState extends State<KrishiMantraFeed> {
-  int _currentIndex = 1;
-  bool _isLoading = false;
-  List<Map<String, dynamic>> _posts = [];
+class _FeedPageState extends State<FeedPage> {
+  final ApiService _apiService = ApiService();
   final ScrollController _scrollController = ScrollController();
+  final List<FeedPost> _posts = [];
+  bool _isLoading = false;
+  int _currentPage = 1;
+  bool _hasMore = true;
 
   @override
   void initState() {
     super.initState();
-    _loadPosts();
-    _scrollController.addListener(_onScroll);
+    _loadInitialPosts();
+    _setupScrollController();
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  void _setupScrollController() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent * 0.8) {
+        _loadMorePosts();
+      }
+    });
   }
 
-  void _onScroll() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      _loadMorePosts();
-    }
-  }
+  Future<void> _loadInitialPosts() async {
+    if (_isLoading) return;
 
-  Future<void> _loadPosts() async {
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate API call with delay
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final response = await _apiService.getRecommendedFeeds(
+        '676d6c691b6a860606ef6db2',
+        1,
+        10,
+      );
 
-    // Demo data
-    final List<Map<String, dynamic>> demoData = [
-      {
-        'farmerName': 'Ramesh Patel',
-        'profileImage': 'https://randomuser.me/api/portraits/men/1.jpg',
-        'postTime': '2 hours ago',
-        'postContent':
-            'My wheat crop is showing great progress this season. The recent rainfall has really helped with the growth. Looking forward to a good harvest! #Farming #Wheat #Agriculture',
-        'mediaUrls': [
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2G-NiMZHWfE0Tmn5H7-dpnG0c84rrANXWRA&s',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2G-NiMZHWfE0Tmn5H7-dpnG0c84rrANXWRA&s',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2G-NiMZHWfE0Tmn5H7-dpnG0c84rrANXWRA&s',
-        ],
-        'location': 'Pune, Maharashtra',
-        'cropType': 'Wheat',
-        'likes': 45,
-        'comments': 12,
-        'shares': 5,
-      },
-      {
-        'farmerName': 'Anita Sharma',
-        'profileImage': 'https://randomuser.me/api/portraits/women/2.jpg',
-        'postTime': '5 hours ago',
-        'postContent':
-            'Successfully implemented drip irrigation in my sugarcane field. This has helped reduce water consumption by 40%. Happy to share my experience with fellow farmers! #WaterConservation #Sugarcane',
-        'mediaUrls': [
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2rmfZjvadVIf3vUQdt3hRazwDq-MKEpkbXQ&s',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2rmfZjvadVIf3vUQdt3hRazwDq-MKEpkbXQ&s',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2rmfZjvadVIf3vUQdt3hRazwDq-MKEpkbXQ&s',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2rmfZjvadVIf3vUQdt3hRazwDq-MKEpkbXQ&s',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2rmfZjvadVIf3vUQdt3hRazwDq-MKEpkbXQ&s',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2rmfZjvadVIf3vUQdt3hRazwDq-MKEpkbXQ&s',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2rmfZjvadVIf3vUQdt3hRazwDq-MKEpkbXQ&s',
-        ],
-        'location': 'Kolhapur, Maharashtra',
-        'cropType': 'Sugarcane',
-        'likes': 78,
-        'comments': 23,
-        'shares': 15,
-      },
-      {
-        'farmerName': 'Rajesh Kumar',
-        'profileImage': 'https://randomuser.me/api/portraits/men/3.jpg',
-        'postTime': '1 day ago',
-        'postContent':
-            'Organic farming workshop today! Learning new techniques for pest control without chemicals. Great turnout from local farmers. Contact me if you want to know more about organic farming methods.',
-        'mediaUrls': [
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-        ],
-        'location': 'Nashik, Maharashtra',
-        'cropType': 'Mixed ',
-        'likes': 156,
-        'comments': 45,
-        'shares': 32,
-      },
-    ];
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> feedsData = data['feeds'];
+        final List<FeedPost> posts =
+            feedsData.map((post) => FeedPost.fromJson(post)).toList();
 
-    setState(() {
-      _posts = demoData;
-      _isLoading = false;
-    });
-  }
+        setState(() {
+          _posts.clear();
+          _posts.addAll(posts);
+          _hasMore = data['pagination']['hasMore'] ?? false;
+          _currentPage = data['pagination']['currentPage'] ?? 1;
+        });
 
-  Future<void> _loadMorePosts() async {
-    if (!_isLoading) {
+        // Record view interactions
+        for (var post in posts) {
+          _recordInteraction(post.id, 'view');
+        }
+      }
+    } catch (e) {
+      print('Error loading posts: $e');
+      _showErrorSnackbar('Failed to load posts');
+    } finally {
       setState(() {
-        _isLoading = true;
-      });
-
-      // Simulate API call with delay
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Add more demo posts
-      final List<Map<String, dynamic>> morePosts = [
-        {
-          'farmerName': 'Priya Desai',
-          'profileImage': 'https://randomuser.me/api/portraits/women/4.jpg',
-          'postTime': '2 days ago',
-          'postContent':
-              'First time trying vertical farming for vegetables. Amazing space utilization and better yield! #VerticalFarming #Innovation',
-          'mediaUrls': [
-            'https://example.com/vertical1.jpg',
-            'https://example.com/vertical2.jpg',
-          ],
-          'location': 'Thane, Maharashtra',
-          'cropType': 'Vegetables',
-          'likes': 92,
-          'comments': 28,
-          'shares': 12,
-        },
-      ];
-
-      setState(() {
-        _posts.addAll(morePosts);
         _isLoading = false;
       });
     }
   }
 
-  Future<void> _onRefresh() async {
-    await _loadPosts();
+  Future<void> _loadMorePosts() async {
+    if (_isLoading || !_hasMore) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await _apiService.getRecommendedFeeds(
+        '676d6c691b6a860606ef6db2',
+        _currentPage + 1,
+        10,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> feedsData = data['feeds'];
+        final List<FeedPost> newPosts =
+            feedsData.map((post) => FeedPost.fromJson(post)).toList();
+
+        setState(() {
+          _posts.addAll(newPosts);
+          _hasMore = data['pagination']['hasMore'] ?? false;
+          _currentPage = data['pagination']['currentPage'] ?? _currentPage + 1;
+        });
+
+        // Record view interactions
+        for (var post in newPosts) {
+          _recordInteraction(post.id, 'view');
+        }
+      }
+    } catch (e) {
+      print('Error loading more posts: $e');
+      _showErrorSnackbar('Failed to load more posts');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _handleLike(String postId, bool isLiked) async {
+    try {
+      final response = await _apiService.likeFeed(
+        postId,
+        {
+          'userId': '67554c6e9fd16ef80ae96828',
+          'userName': 'John Doe',
+          'profilePhoto':
+              'https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Update local post like count
+        setState(() {
+          final postIndex = _posts.indexWhere((post) => post.id == postId);
+          if (postIndex != -1) {
+            final post = _posts[postIndex];
+            final newLikeCount =
+                isLiked ? post.like.count + 1 : post.like.count - 1;
+            _posts[postIndex] = FeedPost(
+              id: post.id,
+              userId: post.userId,
+              userName: post.userName,
+              profilePhoto: post.profilePhoto,
+              description: post.description,
+              content: post.content,
+              mediaUrl: post.mediaUrl,
+              like: LikeInfo(count: newLikeCount),
+              comment: post.comment,
+              location: post.location,
+              date: post.date,
+              recentComments: post.recentComments,
+            );
+          }
+        });
+
+        // Record the interaction
+        _recordInteraction(postId, 'like');
+      } else {
+        _showErrorSnackbar('Failed to update like');
+      }
+    } catch (e) {
+      print('Error handling like: $e');
+      _showErrorSnackbar('Failed to update like');
+    }
+  }
+
+  Future<void> _recordInteraction(String postId, String interactionType) async {
+    try {
+      await _apiService.postUserInteraction({
+        'postId': postId,
+        'interactionType': interactionType,
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error recording interaction: $e');
+    }
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   @override
@@ -150,159 +193,106 @@ class _KrishiMantraFeedState extends State<KrishiMantraFeed> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Krishi Mantra Feed',
-          style: TextStyle(color: Colors.white),
+          'Farm Feed',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
         ),
-        backgroundColor: Colors.green,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {
-              // Implement search functionality
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.filter_list, color: Colors.white),
-            onPressed: () {
-              // Implement filter functionality
-            },
-          ),
-        ],
+        backgroundColor: Colors.white,
+        elevation: 1,
       ),
       body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: _isLoading && _posts.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                controller: _scrollController,
-                itemCount: _posts.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == _posts.length) {
-                    return _isLoading
-                        ? const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : const SizedBox.shrink();
-                  }
-
-                  final post = _posts[index];
-                  return KrishiMantraPost(
-                    farmerName: post['farmerName'],
-                    profileImage: post['profileImage'],
-                    postTime: post['postTime'],
-                    postContent: post['postContent'],
-                    mediaUrls: List<String>.from(post['mediaUrls']),
-                    location: post['location'],
-                    cropType: post['cropType'],
-                    likes: post['likes'],
-                    comments: post['comments'],
-                    shares: post['shares'],
-                  );
-                },
-              ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to create post screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreatePostScreen()),
-          );
-        },
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.add),
+        onRefresh: _loadInitialPosts,
+        child: _posts.isEmpty && !_isLoading
+            ? _buildEmptyState()
+            : _buildFeedList(),
       ),
     );
   }
-}
 
-class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({Key? key}) : super(key: key);
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.feed_outlined, size: 64, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            'No posts available',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: _loadInitialPosts,
+            child: const Text('Refresh'),
+          ),
+        ],
+      ),
+    );
+  }
 
-  @override
-  _CreatePostScreenState createState() => _CreatePostScreenState();
-}
+  Widget _buildFeedList() {
+    return ListView.builder(
+      controller: _scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: _posts.length + (_hasMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index == _posts.length) {
+          return _buildLoadingIndicator();
+        }
 
-class _CreatePostScreenState extends State<CreatePostScreen> {
-  final TextEditingController _contentController = TextEditingController();
-  final List<String> _selectedImages = [];
-  String _selectedCropType = '';
-  String _location = '';
+        final post = _posts[index];
+        return FacebookPostCard(
+          username: post.userName,
+          profileImageUrl: post.profilePhoto,
+          postTime: _formatPostTime(post.date),
+          postContent: post.content,
+          mediaUrl: post.mediaUrl,
+          mediaType: post.mediaType,
+          likes: post.like.count,
+          comments: post.comment.count,
+          shares: 0, // Not included in your API response
+          key: ValueKey(post.id),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 32.0),
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+        ),
+      ),
+    );
+  }
+
+  String _formatPostTime(DateTime dateTime) {
+    final difference = DateTime.now().difference(dateTime);
+
+    if (difference.inDays > 7) {
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
+  }
 
   @override
   void dispose() {
-    _contentController.dispose();
+    _scrollController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickImages() async {
-    // Implement image picking functionality
-  }
-
-  Future<void> _submitPost() async {
-    // Implement post submission
-    Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Post'),
-        backgroundColor: Colors.green,
-        actions: [
-          TextButton(
-            onPressed: _submitPost,
-            child: const Text(
-              'Post',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _contentController,
-              maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: 'Share your farming experience...',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _pickImages,
-              icon: const Icon(Icons.image),
-              label: const Text('Add Photos'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-            ),
-            if (_selectedImages.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _selectedImages
-                    .map((image) => Image.network(
-                          image,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ))
-                    .toList(),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
   }
 }

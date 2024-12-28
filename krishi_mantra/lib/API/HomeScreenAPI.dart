@@ -1,10 +1,10 @@
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = 'http://localhost:3001/api';
+  final String baseUrl = 'http://localhost:3002';
   final String _token = 'your_token';
   // API endpoint
-  final String _GET_HOME_SCREEN = '/main/ads/home-screen-ads';
+  final String _GET_HOME_SCREEN = '/ads/home-screen-ads';
 
   // GET request for home screen ads
   Future<http.Response> getHomeScreenAds() async {

@@ -7,7 +7,7 @@ import expressStatusMonitor from "express-status-monitor";
 import dotenv from "dotenv";
 import winston from "winston";
 import path from "path";
-import mandiRoutes from "./routes/mandiRoutes.js";
+// import mandiRoutes from "./routes/mandiRoutes.js";
 dotenv.config();
 
 // Create Logger
@@ -46,7 +46,7 @@ const logger = winston.createLogger({
 const app = express();
 app.use(express.json());
 
-app.use("/api/mandi", mandiRoutes);
+// app.use("/api/mandi", mandiRoutes);
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 

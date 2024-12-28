@@ -69,3 +69,11 @@
 {"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 01:24:47"}
 {"level":"info","message":"[GET] /api/mandi/prices/Azadpur - IP: ::1","service":"api-gateway","timestamp":"2024-12-27 01:25:38"}
 {"level":"warn","message":"404 - Not Found: /api/mandi/prices/Azadpur","service":"api-gateway","timestamp":"2024-12-27 01:25:38"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 21:19:52"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 21:19:52"}
+{"level":"info","message":"[POST] /api/main/crop-calendar/crops - IP: ::1","service":"api-gateway","timestamp":"2024-12-27 21:20:22"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 21:20:37"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 21:20:37"}
+{"level":"info","message":"🚀 API Gateway running on port 3001","service":"api-gateway","timestamp":"2024-12-27 21:20:41"}
+{"level":"info","message":"🌐 Environment: development","service":"api-gateway","timestamp":"2024-12-27 21:20:41"}
+{"level":"info","message":"[POST] /api/main/crop-calendar/crops - IP: ::1","service":"api-gateway","timestamp":"2024-12-27 21:20:44"}

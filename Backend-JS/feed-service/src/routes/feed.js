@@ -13,4 +13,9 @@ router.get("/tag/:tagName/feeds", feedController.getFeedsByTag);
 
 router.get("/feeds/random", feedController.getRandomFeeds);
 
+// New recommendation routes
+router.post("/user/interest", feedController.updateUserInterest);
+router.post("/user/interaction", feedController.recordInteraction);
+router.get("/recommended/:userId", feedController.getRecommendedFeeds);
+
 module.exports = router;
