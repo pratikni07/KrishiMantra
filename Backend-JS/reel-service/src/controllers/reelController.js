@@ -4,7 +4,7 @@ const TagService = require("../services/tagService");
 const catchAsync = require("../utils/catchAsync");
 
 class ReelController {
-  static createReel = catchAsync(async (req, res) => {
+  static createReel = async (req, res) => {
     const { userId, userName, profilePhoto, description, mediaUrl, location } =
       req.body;
     // const { userId, userName, profilePhoto } = req.user;
@@ -22,7 +22,7 @@ class ReelController {
       status: "success",
       data: reel,
     });
-  });
+  };
 
   static getReels = catchAsync(async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
@@ -123,6 +123,29 @@ class ReelController {
     res.status(201).json({
       status: "success",
       data: comment,
+    });
+  });
+
+  static getCommentByReelId = catchAsync(async (req, res) => {
+    const { reelId } = req.params;
+    const { page = 1, limit = 10, parentComment = null } = req.query;
+
+    const comments = await ReelService.getCommentByReelId(reelId, {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      parentComment,
+    });
+
+    res.json({
+      status: "success",
+      data: comments.data,
+      pagination: {
+        currentPage: comments.currentPage,
+        totalPages: comments.totalPages,
+        totalComments: comments.total,
+        hasNextPage: comments.hasNextPage,
+        hasPrevPage: comments.hasPrevPage,
+      },
     });
   });
 
