@@ -25,7 +25,7 @@ const CommentSchema = new mongoose.Schema(
     },
     parentComment: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
+      ref: "ReelComment",
       default: null,
     },
     likes: {
@@ -43,7 +43,7 @@ const CommentSchema = new mongoose.Schema(
     replies: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: "ReelComment",
       },
     ],
     depth: {
@@ -64,4 +64,5 @@ const CommentSchema = new mongoose.Schema(
 CommentSchema.index({ reel: 1, createdAt: -1 });
 CommentSchema.index({ parentComment: 1 });
 
-module.exports = mongoose.model("ReelComment", CommentSchema);
+const ReelComment = mongoose.model("ReelComment", CommentSchema);
+module.exports = ReelComment;

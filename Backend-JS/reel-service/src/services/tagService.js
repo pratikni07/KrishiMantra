@@ -1,7 +1,7 @@
 // services/tagService.js
 const Tag = require("../models/Tags");
 const redis = require("../config/redis");
-
+const extractHashtags = require("../utils/hashtagExtractor");
 class TagService {
   static async processTags(content, reelId) {
     const hashtags = extractHashtags(content);

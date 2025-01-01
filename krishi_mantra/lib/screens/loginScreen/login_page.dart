@@ -13,7 +13,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final _phoneController = TextEditingController();
   final List<TextEditingController> _otpControllers = List.generate(
     6,
@@ -23,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     6,
     (index) => FocusNode(),
   );
-  
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   bool _isButtonEnabled = false;
@@ -39,7 +40,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _fadeAnimation = Tween<double>(begin: 1, end: 0).animate(_animationController);
+    _fadeAnimation =
+        Tween<double>(begin: 1, end: 0).animate(_animationController);
     _setupOtpControllers();
   }
 
@@ -164,7 +166,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     // Phone Input / OTP Input
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 500),
-                      transitionBuilder: (Widget child, Animation<double> animation) {
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
                         return FadeTransition(
                           opacity: animation,
                           child: SlideTransition(
@@ -176,7 +179,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           ),
                         );
                       },
-                      child: _showOtpField ? _buildOtpFields() : _buildPhoneInput(),
+                      child: _showOtpField
+                          ? _buildOtpFields()
+                          : _buildPhoneInput(),
                     ),
                     const SizedBox(height: 32),
                     // Action Button
@@ -205,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         child: Text(
                           _showOtpField ? 'Verify OTP' : 'Send OTP',
                           style: const TextStyle(
-                            color: Colors.white,  // Corrected this line
+                            color: Colors.white, // Corrected this line
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -323,7 +328,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 maxLength: 1,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   counterText: '',
                   filled: true,
@@ -338,7 +344,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 2),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF2E7D32), width: 2),
                   ),
                 ),
                 onChanged: (value) {
@@ -359,7 +366,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void _validateOtp() {
     setState(() {
-      _isButtonEnabled = _otpControllers.every((controller) => controller.text.length == 1);
+      _isButtonEnabled =
+          _otpControllers.every((controller) => controller.text.length == 1);
     });
   }
 

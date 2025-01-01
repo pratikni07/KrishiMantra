@@ -10,10 +10,9 @@ router.get("/tags/trending", ReelController.getTrendingTags);
 router.get("/tags/:tag", ReelController.getReelsByTag);
 router.get("/user/:userId", ReelController.getUserReels);
 router.get("/:id", ReelController.getReel);
-router.get("/", ReelController.getReels);
+router.get("/:reelId/comments", ReelController.getCommentByReelId);
 
-// Protected routes - require authentication
-// router.use(authMiddleware);
+router.get("/", ReelController.getReels);
 
 router.post("/", ReelController.createReel);
 router.delete("/:id", ReelController.deleteReel);

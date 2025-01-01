@@ -11,28 +11,22 @@ const CACHE_TTL = 3600; // 1 hour
 
 class ReelService {
   static async createReel(reelData) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
+      // Create reel without transaction
       const reel = new Reel(reelData);
-      await reel.save({ session });
+      await reel.save();
 
       if (reelData.description) {
         await TagService.processTags(reelData.description, reel._id);
       }
 
-      await session.commitTransaction();
-
+      // Clear relevant cache
       await redis.del(`reels:trending`);
       await redis.del(`reels:user:${reelData.userId}`);
 
       return reel;
     } catch (error) {
-      await session.abortTransaction();
       throw error;
-    } finally {
-      session.endSession();
     }
   }
 
@@ -205,6 +199,55 @@ class ReelService {
 
     return result;
   }
+
+  //  getCommentByReelId add pagination
+  static async getCommentByReelId(reelId, { page, limit, parentComment }) {
+    const cacheKey = `comment:${reelId}:${page}:${limit}:${parentComment}`;
+    const cachedComment = await redis.get(cacheKey);
+
+    if (cachedComment) {
+      return JSON.parse(cachedComment);
+    }
+
+    const skip = (page - 1) * limit;
+
+    const query = {
+      reel: reelId,
+      isDeleted: false,
+      parentComment: parentComment,
+    };
+
+    const total = await Comment.countDocuments(query);
+
+    const comments = await Comment.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate({
+        path: "replies",
+        select: "-__v",
+        match: { isDeleted: false },
+        options: { sort: { createdAt: -1 } },
+      })
+      .populate("userId", "name profilePhoto")
+      .lean();
+
+    const totalPages = Math.ceil(total / limit);
+
+    const result = {
+      data: comments,
+      currentPage: page,
+      totalPages,
+      total,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    };
+
+    await redis.set(cacheKey, JSON.stringify(result), "EX", 300);
+
+    return result;
+  }
+
   static async addComment(reelId, commentData) {
     const comment = new Comment({
       reel: reelId,
@@ -295,9 +338,6 @@ class ReelService {
   }
 
   static async deleteReel(reelId, userId) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
       const reel = await Reel.findOne({ _id: reelId, userId });
 
@@ -305,14 +345,11 @@ class ReelService {
         throw new Error("Reel not found or unauthorized");
       }
 
-      await Promise.all([
-        Reel.findByIdAndDelete(reelId, { session }),
-        Comment.deleteMany({ reel: reelId }, { session }),
-        Like.deleteMany({ reel: reelId }, { session }),
-        TagService.removeTagsFromReel(reelId),
-      ]);
-
-      await session.commitTransaction();
+      // Execute deletions sequentially to maintain consistency
+      await Reel.findByIdAndDelete(reelId);
+      await Comment.deleteMany({ reel: reelId });
+      await Like.deleteMany({ reel: reelId });
+      await TagService.removeTagsFromReel(reelId);
 
       // Clear related cache
       const cacheKeys = [
@@ -326,10 +363,7 @@ class ReelService {
 
       return true;
     } catch (error) {
-      await session.abortTransaction();
       throw error;
-    } finally {
-      session.endSession();
     }
   }
 
