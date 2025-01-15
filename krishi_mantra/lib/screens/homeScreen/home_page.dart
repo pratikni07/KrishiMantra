@@ -100,7 +100,6 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
     final lastShownTime = prefs.getInt(LAST_MODAL_TIME_KEY) ?? 0;
     final currentTime = DateTime.now().millisecondsSinceEpoch;
 
-    // Check if 2 hours have passed since last shown
     if (currentTime - lastShownTime >=
         const Duration(hours: 2).inMilliseconds) {
       // Show modal immediately if 2 hours have passed
@@ -755,21 +754,26 @@ class HomeContent extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                NewsCard(
-                  title: 'Major Breakthrough in Renewable Energy Research',
-                  imageUrl:
-                      'https://images.hindustantimes.com/rf/image_size_960x540/HT/p2/2018/12/26/Pictures/files-india-weather-monsoon_b5f4a298-0917-11e9-8b39-01e96223c804.jpg',
+                MarathiNewsCard(
+                  category: 'शेतीवृत्त',
+                  title: 'कांदा दर घसरण्याचा धोका – कृषी तज्ज्ञांचे मत',
                   content:
-                      'Scientists at the University of Technology have developed a new type of solar panel that is 20% more efficient than traditional designs. This breakthrough could significantly reduce the cost of solar power and accelerate the transition to renewable energy.',
-                  publishedDate: DateTime(2023, 5, 15),
+                      'केंद्र सरकारने शेतकऱ्यांना जैविक शेतीकडे प्रोत्साहन देणारी योजना सुरू केली आहे. योजनेअंतर्गत जैविक खते व बियाणांवर ५०% अनुदान दिले जाणार आहे',
+                  imageUrl:
+                      'https://www.agriculturetoday.in/assets/img/upcoming-events/africa-agri-expo.jpg', // Replace with actual image URL
+                  publishedDate: DateTime(2025, 11, 30),
                 ),
-                NewsCard(
-                  title: 'Major Breakthrough in Renewable Energy Research',
-                  imageUrl:
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRydbhrDtLoiZYJ8rHtmqTUqxJtxnmQr6i0Pg&s',
+                SizedBox(
+                  height: 10,
+                ),
+                MarathiNewsCard(
+                  category: 'शेतीवृत्त',
+                  title: 'कांदा दर घसरण्याचा धोका ',
                   content:
-                      'Scientists at the University of Technology have developed a new type of solar panel that is 20% more efficient than traditional designs. This breakthrough could significantly reduce the cost of solar power and accelerate the transition to renewable energy.',
-                  publishedDate: DateTime(2023, 5, 15),
+                      'केंद्र सरकारने शेतकऱ्यांना जैविक शेतीकडे प्रोत्साहन देणारी योजना सुरू केली आहे.योजनेअंतर्गत जैविक खते व बियाणांवर ५०% अनुदान दिले जाणार आहे',
+                  imageUrl:
+                      'https://www.agriculturetoday.in/assets/img/upcoming-events/africa-agri-expo.jpg', // Replace with actual image URL
+                  publishedDate: DateTime(2025, 11, 30),
                 ),
               ],
             ),
